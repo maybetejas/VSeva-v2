@@ -3,4 +3,5 @@
 </script>
 
 <a href="/bookings/completed" class="underline">completed</a>
+
 <FAQs />

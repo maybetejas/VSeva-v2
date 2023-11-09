@@ -1,4 +1,4 @@
-<div class="card w-96 bg-base-100 shadow-xl image-full">
+<div class="card w-96 bg-base-100">
 	<figure>
 		<!-- <img src="" alt="Shoes" /> -->
 	</figure>

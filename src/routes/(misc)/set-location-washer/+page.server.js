@@ -1,6 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
-
 import { PUBLIC_DB_URL } from '$env/static/public'
 
 
@@ -8,30 +7,20 @@ export const actions = {
     updateLocation: async ({request, locals }) => {
         const formData = await request.formData();
         const address = formData.get('address')
-        const car = formData.get('car')
-        const lat = formData.get('lat')
-        const lng = formData.get('lng')
-        console.log(lat);
-        console.log(lng);
+        const anchor = formData.get('newLocation')
 
         const data = {
             address,
-            car,
-            location: {
-                lat, lng
-            }
+            anchor
         }
 
         const pb = new PocketBase(PUBLIC_DB_URL)
 
         try {
-            const record = await pb.collection('users').update(locals?.user?.id, data);
+            const record = await pb.collection('washers').update(locals?.washer?.id, data);
         } catch (error) {
-            return {
-                x: true
-            }
+            console.log("didn't work");
         }
-        throw redirect(302, '/');
-           
+        throw redirect(302, '/washer');
     }
 }

@@ -1,11 +1,24 @@
 <script>
+	import DateSelector from './../../../../lib/components/DateSelector.svelte';
+	import { calculatePrice, currentCarSize } from './../../../../lib/utils.js';
 	import Rain from '$lib/components/Rain.svelte';
 	import { servicesList } from '$lib/utils.js';
 	import { page } from '$app/stores';
-	import dayjs from 'dayjs';
 	import { Datepicker } from 'svelte-calendar';
+	import { onMount } from 'svelte';
 
-	let store;
+	onMount(async () => {
+		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+			if ($currentCarSize === 'compact') {
+				const oldCarSize = localStorage?.getItem('carSize');
+				if (oldCarSize) {
+					currentCarSize.set(oldCarSize);
+				}
+			}
+		}
+	});
+
+	export let date;
 
 	const id = $page.params.bookId;
 
@@ -26,6 +39,10 @@
 	function rain() {
 		triggerRain = !triggerRain;
 	}
+	let price = 0;
+	$: price = calculatePrice($currentCarSize, name);
+
+	let selectedDate = '';
 </script>
 
 <div class="w-full h-screen flex flex-col">
@@ -34,48 +51,36 @@
 		<h1 class="text-2xl">{name}</h1>
 		<div />
 	</div>
-	<div class="bg-red w-3/4">
-		<Datepicker bind:store let:key let:send let:receive>
-			<button
-				class="btn btn-primary btn-outline"
-				in:receive|local={{ key }}
-				out:send|local={{ key }}
-			>
-				{#if $store?.hasChosen}
-					<p class="text-white font-thin">{dayjs($store.selected).format('ddd MMM D, YYYY')}</p>
-				{:else}
-					<p class="text-white font-thin">Date</p>
-				{/if}
-			</button>
-		</Datepicker>
-	</div>
 	<div>
-		<select class="select select-primary w-1/2 max-w-xs">
-			<option disabled selected>Pick Time</option>
-			<option>8 am</option>
-			<option>9 am</option>
-			<option>10 am</option>
-			<option>11 am</option>
-		</select>
+		<DateSelector bind:selectedDate />
+		{selectedDate}
 	</div>
+	<br /><br />
 	<div class="flex flex-col">
 		<h1 class="text-xl">Services</h1>
 		<ul class="list-disc ml-4">
 			{#each services as service}
 				<li>{service}</li>
+				<li>{service.time}</li>
 			{/each}
 		</ul>
 	</div>
+	<br /><br />
 	<div class="alert flex">
 		<span>💸</span>
 		<span class="text-sm">You pay after the wash is done </span>
 	</div>
+	<br /><br />
+	<div>
+		<h1>Price: {price} for {$currentCarSize}</h1>
+	</div>
+	<br /><br />
+	<div />
 	{#if triggerRain}
 		<Rain />
-		<a href="/"
-		><button on:click={rain} class="btn btn-secondary absolute bottom-5 w-11/12">Go to bookings</button></a
-	>
-		{:else}
-	<button on:click={rain} class="btn btn-secondary absolute bottom-5 w-11/12">Book</button>
+		<a href="/"><button on:click={rain} class="btn btn-secondary w-11/12">Go to bookings</button></a
+		>
+	{:else}
+		<button on:click={rain} class="btn btn-secondary w-11/12">Book</button>
 	{/if}
 </div>

@@ -1,5 +1,5 @@
 <script>
-	import { isValidName, isValidContact, isValidPassword } from '$lib/utils.js';
+	import { isValidContact } from '$lib/utils.js';
 
 	export let form;
 

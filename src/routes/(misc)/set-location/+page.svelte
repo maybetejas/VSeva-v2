@@ -1,15 +1,35 @@
 <script>
-	import { getUserLocation, currentCar } from '$lib/utils.js';
+	import { currentCoords, currentLocation } from './../../../lib/utils.js';
+	import { getUserLocation } from '$lib/utils.js';
 	import { onMount } from 'svelte';
 
-	export let data;
-	let address = data?.user?.address || '';
-	let location = {};
+	let address = '';
 	let geoLocError = false;
+
+	// Function to update the currentCoords store
+	function updateCurrentCoords(coords) {
+		currentCoords.set(coords);
+		localStorage?.setItem('coords', JSON.stringify(coords));
+	}
+
+	if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+		const oldCoordsStr = localStorage?.getItem('coords');
+		if (oldCoordsStr) {
+			const oldCoords = JSON.parse(oldCoordsStr);
+			updateCurrentCoords(oldCoords);
+		}
+
+		// Retrieve the address from localStorage
+		const oldLocation = localStorage?.getItem('address');
+		if (oldLocation) {
+			address = oldLocation;
+		}
+	}
 
 	async function fetchGeolocation() {
 		try {
-			location = await getUserLocation();
+			const newLocation = await getUserLocation();
+			updateCurrentCoords(newLocation);
 		} catch (error) {
 			geoLocError = true;
 		}
@@ -18,33 +38,34 @@
 	onMount(() => {
 		fetchGeolocation();
 	});
+
+	function setLocation() {
+		localStorage?.setItem('address', address);
+		window.location.href = '/';
+	}
 </script>
 
 <main class="w-full flex flex-col items-center mt-20">
 	{#if geoLocError}
 		☝️ Allow Geolocation To Accurate Address And Refresh
+		<br />
+		Don't know how to? watch this video -
+		<button class="btn btn-outline btn-seconddary"
+			><a
+				data-sveltekit-reload
+				href="https://youtu.be/LM6lWvkIVVw?si=PC80lF0t7DXGZ9j2"
+				target="_blank">enable geolocation</a
+			></button
+		>
 	{/if}
 
-	<form action="?/updateLocation" method="POST" class="mt-10">
-		<div class="form-control w-full">
-			<div class="w-full">
-				<label class="label">
-					<span class="label-text">Update your address</span>
-				</label>
-				<label class="input-group">
-					<span>Address</span>
-					<input
-						bind:value={address}
-						name="address"
-						type="text"
-						class="input input-bordered w-full"
-					/>
-				</label>
-			</div>
-			<input type="hidden" name="car" value={$currentCar} />
-			<input type="hidden" name="lat" value={location.lat} />
-			<input type="hidden" name="lng" value={location.lng} />
-			<button class="btn btn-primary w-full mt-4" type="submit">Set Location</button>
-		</div>
-	</form>
+	<div>
+		<input
+			type="text"
+			bind:value={address}
+			placeholder={$currentLocation}
+			class="input input-bordered input-primary w-full max-w-xs"
+		/>
+		<button on:click={setLocation} class="btn btn-base btn-outline w-full mt-2">Set</button>
+	</div>
 </main>

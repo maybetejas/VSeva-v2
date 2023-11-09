@@ -1,77 +1,32 @@
 <script>
-	import { currentCar, formatAddress } from '$lib/utils.js';
-	import { onMount } from 'svelte';
-
+	import { currentLocation } from '$lib/utils.js';
+	import { formatAddress } from '$lib/utils.js';
+	import CarSelection from '../../lib/components/CarSelection.svelte';
 	export let data;
 
-	onMount(() => {
-		if (data?.user?.car) {
-			currentCar.set(data?.user?.car);
-		} else {
-			currentCar.set('Select a car');
+	if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+		if ($currentLocation === 'Address') {
+			const oldLocation = localStorage?.getItem('address');
+			if (oldLocation) {
+				currentLocation.set(oldLocation);
+			}
 		}
-	});
-
-	function handleCarChange(event) {
-		currentCar.set(event.target.value); // Update the store with the selected value
 	}
 </script>
 
-<main class="h-full w-full flex flex-col items-center">
+<section class="w-full flex flex-col items-center">
 	<div class="navbar bg-base-100">
-		<div class="flex-none">
-			<div class="dropdown">
-				<label tabindex="0" class="btn btn-ghost btn-circle">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-						><path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h7"
-						/></svg
-					>
-				</label>
-				<ul
-					tabindex="0"
-					class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-				>
-					{#if data?.user}
-						<li>
-							<form action="/logout" method="POST">
-								<button type="submit">logout</button>
-							</form>
-						</li>
-						<li><a href="/bookings">bookings</a></li>
-						<li><a href="/washer">washer</a></li>
-					{:else}
-						<li><a href="/login">Login</a></li>
-						<li><a href="/bookings">bookings</a></li>
-						<li><a href="/washer">washer</a></li>
-					{/if}
-				</ul>
-			</div>
-		</div>
 		<div class="flex-1">
 			<div>
-				<select class="select select-sm w-full max-w-xs" on:change={handleCarChange}>
-					<option disabled selected>{$currentCar}</option>
-					<option value="hatchback">hatchback</option>
-					<option value="sedan">sedan</option>
-					<option value="suv">suv</option>
-					<option value="bike">bike</option>
-				</select>
+				<span class="flex"><img src="carLogo.svg" alt="" class="w-6"><CarSelection /></span>
 			</div>
 		</div>
+
 		<div class="flex-none">
-			{#if data?.user}
-				{formatAddress(data?.user?.address)}
+			{#if $currentLocation === 'Address'}
+				<span><a href="/set-location" class="text-sm text-neutral-400">Set Address</a></span>
 			{:else}
-				set location
+				<span><p class="text-sm text-neutral-400">{formatAddress($currentLocation)}</p></span>
 			{/if}
 			<a href="/set-location">
 				<button class="btn btn-square btn-ghost">
@@ -81,7 +36,7 @@
 		</div>
 	</div>
 	<slot />
-	<footer class="footer p-10 bg-base-300 text-base-content flex relative bottom-0">
+	<!-- <footer class="footer p-10 bg-base-300 text-base-content flex relative bottom-0">
 		<nav>
 			<header class="footer-title">Services</header>
 			<a class="link link-hover">Branding</a>
@@ -137,5 +92,5 @@
 				>
 			</div>
 		</nav>
-	</footer>
-</main>
+	</footer> -->
+</section>

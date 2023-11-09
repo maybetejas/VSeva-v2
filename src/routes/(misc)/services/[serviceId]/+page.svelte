@@ -1,7 +1,10 @@
 <script>
+	import { currentCarSize } from './../../../../lib/utils.js';
 	import { servicesList } from '$lib/utils.js';
 	import YTplayer from '$lib/components/YTplayer.svelte';
 	import { page } from '$app/stores';
+
+	export let data;
 
 	const id = $page.params.serviceId;
 
@@ -43,6 +46,10 @@
 			{/each}
 		</ul>
 	</div>
-
-	<a href="/book/{id}"><button class="btn btn-secondary absolute bottom-5 w-11/12">Book</button></a>
+	
+	{#if data?.user}
+		<a href="/book/{id}"><button class="btn btn-secondary w-11/12">Book</button></a>
+	{:else}
+		<a href="/login"><button class="btn btn-secondary w-11/12">Login to book</button></a>
+	{/if}
 </div>

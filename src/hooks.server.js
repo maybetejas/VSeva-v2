@@ -1,5 +1,6 @@
 import PocketBase from 'pocketbase';
 import { PUBLIC_DB_URL } from '$env/static/public';
+import { redirect } from '@sveltejs/kit';
 
 
 export async function handle({ event, resolve }) {
@@ -21,11 +22,34 @@ export async function handle({ event, resolve }) {
             id: user.id,
             name: user.name,
             contact: user.contact,
-            car: user.car,
-            address: user.address
+            address: user.address,
+            washer: user.washer,
         }
     }
 
+    if (user.washer) {
+        try {
+            // Attempt to get the washer entry by user ID
+            const washer = await pb.collection('washers').getFirstListItem(`userId="${user.id}"`);
+            event.locals.washer = {
+                id: washer.id,
+                name: washer.name,
+                address: washer.address,
+                contact: washer.contact,
+                workHours: washer.workHours,
+                anchor: washer.anchor,
+            }
+        } catch (error) {
+                // If washer entry doesn't exist, create a new entry
+                const newWasher = {
+                    name: user.name,
+                    contact: user.contact,
+                    userId: user.id,
+                };
+                await pb.collection('washers').create(newWasher);
+        }
+    }
+    
 
     return await resolve(event)
 }
