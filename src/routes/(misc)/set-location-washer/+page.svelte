@@ -11,7 +11,6 @@
 	async function fetchGeolocation() {
 		try {
 			newLocation = await getUserLocation();
-			console.log(newLocation);
 		} catch (error) {
 			geoLocError = true;
 		}
@@ -20,8 +19,6 @@
 	onMount(() => {
 		fetchGeolocation();
 	});
-
-	console.log(newLocation);
 </script>
 
 <main class="w-full flex flex-col items-center mt-20">

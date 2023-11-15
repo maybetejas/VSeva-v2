@@ -4,7 +4,6 @@
 	import ReviewCarousel from './../../lib/components/ReviewCarousel.svelte';
 	import { servicesList, subscriptions } from '$lib/utils.js';
 	import YTplayer from '$lib/components/YTplayer.svelte';
-	import { currentCarSize, currentCoords, currentLocation } from '../../lib/utils';
 	export let data;
 	let isAddress = false;
 	let isCoords = false;

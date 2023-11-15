@@ -11,3 +11,7 @@
 </form>
 <br />
 <a class="underline" href="/login">login</a>
+<br />
+{#if data?.washer}
+	<a data-sveltekit-preload-data="off" class="underline" href="/washer">washer dashboard</a>
+{/if}

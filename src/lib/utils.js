@@ -1,3 +1,5 @@
+
+
 export function isValidName(name) {
     // Check if the name is not empty and contains only letters
     if (!name || !/^[a-zA-Z\s]+$/.test(name)) {
@@ -135,46 +137,6 @@ export const servicesList = [
       "Dashboard polish",
     ]
   },
-  {
-    id: 1,
-    svg: 'car.svg',
-    name: "interior",
-    link: "https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma",
-    services: [
-      "Exterior wash",
-      "Vaccum",
-      "Carpet wash",
-      "Hood cleaning",
-      "Dashboard polish",
-      "Tyre polish",
-      "Exterior Wax",
-    ]
-  },
-  {
-    id: 2,
-    svg: 'car.svg',
-    name: "exterior",
-    link: "https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma",
-    services: [
-      "Exterior wash",
-      "Tyre wash",
-      "Mud guard wash",
-      "Windshield wash",
-      "Wax",
-    ]
-  },
-  {
-    id: 3,
-    svg: 'car.svg',
-    name: "fullBody",
-    link: "https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma",
-    services: [
-      "Vaccum",
-      "Carpet cleaning",
-      "Hood cleaning",
-      "Dashboard polish",
-    ]
-  },
   
 ]
 
@@ -217,6 +179,99 @@ export const subscriptions = [
     ]
   },
 ]
+
+export let workHours = {
+  Monday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  Tuesday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  weekday: {
+    active: false,
+    working: [
+      {
+        start: '08:00',
+        end: '13:00'
+      }, 
+      {
+        start: '14:00',
+        end: '15:00'
+      }
+    ]
+  },
+  Wednesday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  Thursday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  Friday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  Saturday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  },
+  Sunday: {
+    active: false,
+    batchOne: {
+      start: '08:00',
+      end: '13:00'
+    },
+    batchTwo: {
+      start: '14:00',
+      end: '15:00'
+    }
+  }
+};
 
 export function getUserLocation() {
   return new Promise((resolve, reject) => {
@@ -320,6 +375,66 @@ export function formatAddress(address) {
       return 'Unknown';
     }
 }
+
+export function calculateTime(carSize, serviceType) {
+  // Define base times for different car sizes and service types
+  const baseTimes = {
+    compact: {
+      interior: { timeTaken: 60, slotTaken: 90 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 120, slotTaken: 150 },
+    },
+    midsize: {
+      interior: { timeTaken: 60, slotTaken: 90 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 120, slotTaken: 150 },
+    },
+    fullsize: {
+      interior: { timeTaken: 90, slotTaken: 120 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 150, slotTaken: 180 },
+    },
+    hatchback: {
+      interior: { timeTaken: 60, slotTaken: 90 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 120, slotTaken: 150 },
+    },
+    sedan: {
+      interior: { timeTaken: 90, slotTaken: 120 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 150, slotTaken: 180 },
+    },
+    suv: {
+      interior: { timeTaken: 120, slotTaken: 150 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 180, slotTaken: 210 },
+    },
+    muv: {
+      interior: { timeTaken: 120, slotTaken: 150 },
+      exterior: { timeTaken: 60, slotTaken: 90 },
+      fullBody: { timeTaken: 180, slotTaken: 210 },
+    },
+  };
+
+  // Get the base times for the specified car size
+  const sizeTimes = baseTimes[carSize];
+
+  // Check if the specified car size is valid
+  if (!sizeTimes) {
+    return { timeTaken: 'Unknown', slotTaken: 'Unknown' };
+  }
+
+  // Get the times for the specified service type
+  const times = sizeTimes[serviceType];
+
+  // Check if the specified service type is valid
+  if (times) {
+    return times;
+  } else {
+    return { timeTaken: 'Unknown', slotTaken: 'Unknown' };
+  }
+}
+
   
 export const currentDay = new Date();
 
@@ -343,6 +458,10 @@ export function formatDate(date) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+
+
+// api.js
 
 
 //stores

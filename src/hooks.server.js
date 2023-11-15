@@ -49,7 +49,6 @@ export async function handle({ event, resolve }) {
                 await pb.collection('washers').create(newWasher);
         }
     }
-    
 
     return await resolve(event)
 }

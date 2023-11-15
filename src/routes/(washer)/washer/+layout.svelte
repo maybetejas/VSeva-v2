@@ -25,16 +25,7 @@
 					tabindex="0"
 					class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 				>
-					{#if data?.user}
-						<li>
-							<form action="/logout" method="POST">
-								<button type="submit">logout</button>
-							</form>
-						</li>
-						<li><a href="/washer/washer-bookings">washer orders</a></li>
-						<li><a href="/washer/washer-profile">washer profile</a></li>
-					{:else}
-						<li><a href="/login">Login</a></li>
+					{#if data?.washer}
 						<li><a href="/washer/washer-bookings">washer orders</a></li>
 						<li><a href="/washer/washer-profile">washer profile</a></li>
 					{/if}
