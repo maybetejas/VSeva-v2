@@ -12,7 +12,6 @@ export async function load({ locals }) {
 
     if (record) {
         ws = record.workHours;
-        console.log(ws);
     } else {
         ws = workHours; 
     }
@@ -32,6 +31,6 @@ export const actions = {
         }
         const pb = new PocketBase(PUBLIC_DB_URL);
         await pb.collection('washers').update(locals?.washer?.id, data);
-        throw redirect(302, '/washer')
+        //throw redirect(302, '/washer')
     }
 }

@@ -14,8 +14,9 @@
 	}
 
 	function handleDateSelection(date) {
-		selectedDate = formatDate(date);
+		selectedDate = date;
 		dispatch('dateSelected', selectedDate); // Emit the selected date
+		dispatch('weekdaySelected', date.toLocaleString('default', { weekday: 'short' }));
 	}
 </script>
 
@@ -25,7 +26,7 @@
 	<div class="flex w-11/12 items-center">
 		{#each nextDates as date}
 			<button
-				class="btn {selectedDate === formatDate(date)
+				class="btn {selectedDate === date
 					? 'btn-accent btn-outline'
 					: 'btn-ghost'} flex"
 				on:click={() => handleDateSelection(date)}

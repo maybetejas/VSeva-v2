@@ -203,19 +203,7 @@ export let workHours = {
       end: '15:00'
     }
   },
-  weekday: {
-    active: false,
-    working: [
-      {
-        start: '08:00',
-        end: '13:00'
-      }, 
-      {
-        start: '14:00',
-        end: '15:00'
-      }
-    ]
-  },
+
   Wednesday: {
     active: false,
     batchOne: {
