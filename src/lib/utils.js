@@ -305,7 +305,75 @@ export function formatAddress(address) {
     } else {
       return 'Set location';
     }
+}
+export function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
+  // Iterate over each washer in the array
+  for (let i = 0; i < washers.length; i++) {
+    const washer = washers[i];
+
+    // Check if the target weekday exists in the workHours object of the current washer
+    if (washer.workHours.hasOwnProperty(targetWeekday)) {
+      const targetDay = washer.workHours[targetWeekday];
+
+      // Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
+      for (const batch in targetDay) {
+        if (targetDay.hasOwnProperty(batch)) {
+          const originalSlots = targetDay[batch];
+
+          // Iterate over the filled slots for the washer
+          filledSlots.forEach((filledSlot) => {
+            const filledStart = filledSlot.slot.start;
+            const filledEnd = filledSlot.slot.end;
+
+            // Filter out original slots that overlap with filled slots
+            targetDay[batch] = originalSlots.filter((originalSlot) => {
+              const originalStart = originalSlot.start;
+              const originalEnd = originalSlot.end;
+
+              // Check for overlap
+              if (
+                (filledStart >= originalStart && filledStart < originalEnd) ||
+                (filledEnd > originalStart && filledEnd <= originalEnd) ||
+                (filledStart <= originalStart && filledEnd >= originalEnd)
+              ) {
+                // Adjust or remove the overlapping slot
+                if (filledStart <= originalStart && filledEnd >= originalEnd) {
+                  // Filled slot completely covers the original slot, do nothing
+                  return false; // Remove the original slot from the array
+                } else if (filledStart <= originalStart) {
+                  // Filled slot overlaps the start of the original slot
+                  originalSlot.start = filledEnd;
+                } else if (filledEnd >= originalEnd) {
+                  // Filled slot overlaps the end of the original slot
+                  originalSlot.end = filledStart;
+                } else {
+                  // Filled slot is within the original slot, split the original slot
+                  originalSlots.push({ start: filledEnd, end: originalEnd });
+                  originalSlot.end = filledStart;
+                }
+              }
+              return true; // Keep the original slot in the array
+            });
+          });
+
+          // Filter out slots that cannot accommodate the service time
+          targetDay[batch] = targetDay[batch].filter((slot) => {
+            // Assuming service time is in minutes
+            const slotDuration =
+              (new Date('1970-01-01T' + slot.end + 'Z') -
+                new Date('1970-01-01T' + slot.start + 'Z')) /
+              (1000 * 60);
+            return slotDuration >= serviceTime;
+          });
+        }
+      }
+    }
   }
+
+  return washers;
+}
+
+
 
   // utils.js
 

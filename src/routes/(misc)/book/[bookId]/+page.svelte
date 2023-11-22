@@ -1,6 +1,11 @@
 <script>
 	import DateSelector from './../../../../lib/components/DateSelector.svelte';
-	import { calculatePrice, calculateTime, currentCarSize } from './../../../../lib/utils.js';
+	import {
+		calculatePrice,
+		calculateTime,
+		currentCarSize,
+		deleteOverlappingSlotsForWashers
+	} from './../../../../lib/utils.js';
 	import Rain from '$lib/components/Rain.svelte';
 	import { servicesList } from '$lib/utils.js';
 	import { page } from '$app/stores';
@@ -50,105 +55,31 @@
 			})
 		);
 		filledSlotsForSelectedDate = filledSlotsForSelectedDate.flat();
+		console.log(filledSlotsForSelectedDate);
 	}
-
-	function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
-		// Iterate over each washer in the array
-		for (let i = 0; i < washers.length; i++) {
-			const washer = washers[i];
-
-			// Check if the target weekday exists in the workHours object of the current washer
-			if (washer.workHours.hasOwnProperty(targetWeekday)) {
-				const targetDay = washer.workHours[targetWeekday];
-
-				// Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
-				for (const batch in targetDay) {
-					if (targetDay.hasOwnProperty(batch)) {
-						const originalSlots = targetDay[batch];
-
-						// Iterate over the filled slots
-						filledSlots.forEach((filledSlot) => {
-							// Convert the date in filledSlot to match the format in originalSlots
-							const filledSlotStart = filledSlot.slot.start;
-							const filledSlotEnd = filledSlot.slot.end;
-
-							// Iterate over the original slots to check for overlap
-							for (let j = 0; j < originalSlots.length; j++) {
-								const originalSlot = originalSlots[j];
-
-								// Convert the date in originalSlot to match the format in filledSlot
-								const originalSlotStart = originalSlot.start;
-								const originalSlotEnd = originalSlot.end;
-
-								// Check for overlap
-								if (
-									(filledSlotStart >= originalSlotStart && filledSlotStart < originalSlotEnd) ||
-									(filledSlotEnd > originalSlotStart && filledSlotEnd <= originalSlotEnd) ||
-									(filledSlotStart <= originalSlotStart && filledSlotEnd >= originalSlotEnd)
-								) {
-									// Remove or adjust the overlapping slot
-									if (filledSlotStart <= originalSlotStart && filledSlotEnd >= originalSlotEnd) {
-										// Filled slot completely covers the original slot, remove the original slot
-										originalSlots.splice(j, 1);
-										j--; // Adjust the index as we removed an element
-									} else if (filledSlotStart <= originalSlotStart) {
-										// Filled slot overlaps the start of the original slot
-										originalSlot.start = filledSlotEnd;
-									} else if (filledSlotEnd >= originalSlotEnd) {
-										// Filled slot overlaps the end of the original slot
-										originalSlot.end = filledSlotStart;
-									} else {
-										// Filled slot is within the original slot, split the original slot
-										originalSlots.splice(
-											j,
-											1,
-											{ start: originalSlotStart, end: filledSlotStart },
-											{ start: filledSlotEnd, end: originalSlotEnd }
-										);
-										j++; // Adjust the index as we added two elements
-									}
-								}
-							}
-						});
-
-						// Filter out slots that cannot accommodate the service time
-						targetDay[batch] = originalSlots.filter((slot) => {
-							// Assuming service time is in minutes
-							const slotDuration =
-								(new Date('1970-01-01T' + slot.end + 'Z') -
-									new Date('1970-01-01T' + slot.start + 'Z')) /
-								(1000 * 60);
-							return slotDuration >= serviceTime;
-						});
-					}
-				}
-			}
-		}
-
-		return washers;
-	}
-
-	///realtime subscribed to the array
-	pb.collection('filledSlots').subscribe('*', async (e) => {
-		filterFilledSlotsByWashers();
-		availableSlots = deleteOverlappingSlotsForWashers(
-			filteredWashers,
-			filledSlotsForSelectedDate,
-			day,
-			time.slotTaken
-		);
-	});
-
-	//reacting to the changes made in the date by the user
-	$: {
-		if (selectedDate) {
-			filterFilledSlotsByWashers();
+	async function fetchData() {
+		try {
+			await filterFilledSlotsByWashers();
 			availableSlots = deleteOverlappingSlotsForWashers(
 				filteredWashers,
 				filledSlotsForSelectedDate,
 				day,
 				time.slotTaken
 			);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	}
+
+	///realtime subscribed to the array
+	pb.collection('filledSlots').subscribe('*', async (e) => {
+		fetchData();
+	});
+
+	//reacting to the changes made in the date by the user
+	$: {
+		if (selectedDate) {
+			fetchData();
 		}
 	}
 
@@ -220,6 +151,7 @@
 	$: day = selectedDate.toLocaleString('default', { weekday: 'long' });
 	const time = calculateTime($currentCarSize, name);
 	console.log(day);
+	console.log(time.slotTaken);
 	onDestroy(() => {
 		pb.collection('filledSlots').unsubscribe('*');
 	});
@@ -238,9 +170,21 @@
 		{day}
 	</div>
 	<br />
-		{#each filledSlotsForSelectedDate as w (w.id)}
-			<p>{JSON.stringify(w)}</p>
-		{/each}
+	<h1>washers</h1>
+	{#each filteredWashers as w (w.id)}
+		<p>{JSON.stringify(w)}</p>
+	{/each}
+	<br />
+	<h1>slots for that day</h1>
+	{#each filledSlotsForSelectedDate as w (w.id)}
+		<p>{JSON.stringify(w)}</p>
+	{/each}
+	<br />
+	<h1>availableSlots</h1>
+	{#each availableSlots as w (w.id)}
+		<p>{JSON.stringify(w)}</p>
+	{/each}
+
 	<br />
 	<div class="flex flex-col">
 		<h1 class="text-xl">Services</h1>

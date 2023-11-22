@@ -1,4 +1,3 @@
-
 <script>
 	function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
 		// Iterate over each washer in the array
@@ -202,8 +201,8 @@
 		// ... (other filled slot objects)
 	];
 
-	const targetWeekday = 'Sunday';
-	const serviceTime = 0; // Assuming service time is 90 minutes
+	const targetWeekday = 'Saturday';
+	const serviceTime = 60; // Assuming service time is 90 minutes
 
 	const editedWashers = deleteOverlappingSlotsForWashers(
 		washersArray,
