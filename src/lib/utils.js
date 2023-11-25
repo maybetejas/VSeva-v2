@@ -306,10 +306,35 @@ export function formatAddress(address) {
       return 'Set location';
     }
 }
+
+function deepCopy(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj; // Return non-object types as is
+  }
+
+  if (Array.isArray(obj)) {
+    // If obj is an array, create a new array and deep copy each element
+    return obj.map(deepCopy);
+  }
+
+  // If obj is an object, create a new object and deep copy each property
+  const result = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = deepCopy(obj[key]);
+    }
+  }
+
+  return result;
+}
+
 export function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
+  // Create a deep copy of washers to avoid modifying the original array
+  const updatedWashers = deepCopy(washers);
+
   // Iterate over each washer in the array
-  for (let i = 0; i < washers.length; i++) {
-    const washer = washers[i];
+  for (let i = 0; i < updatedWashers.length; i++) {
+    const washer = updatedWashers[i];
 
     // Check if the target weekday exists in the workHours object of the current washer
     if (washer.workHours.hasOwnProperty(targetWeekday)) {
@@ -318,60 +343,65 @@ export function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWee
       // Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
       for (const batch in targetDay) {
         if (targetDay.hasOwnProperty(batch)) {
-          const originalSlots = targetDay[batch];
-
-          // Iterate over the filled slots for the washer
-          filledSlots.forEach((filledSlot) => {
-            const filledStart = filledSlot.slot.start;
-            const filledEnd = filledSlot.slot.end;
-
-            // Filter out original slots that overlap with filled slots
-            targetDay[batch] = originalSlots.filter((originalSlot) => {
+          // Filter out slots that cannot accommodate the service time
+          const filteredSlots = targetDay[batch].filter((originalSlot) => {
+            // Check for overlap with filled slots
+            const overlaps = filledSlots.some((filledSlot) => {
+              const filledStart = filledSlot.slot.start;
+              const filledEnd = filledSlot.slot.end;
               const originalStart = originalSlot.start;
               const originalEnd = originalSlot.end;
 
-              // Check for overlap
-              if (
+              return (
                 (filledStart >= originalStart && filledStart < originalEnd) ||
                 (filledEnd > originalStart && filledEnd <= originalEnd) ||
                 (filledStart <= originalStart && filledEnd >= originalEnd)
-              ) {
-                // Adjust or remove the overlapping slot
-                if (filledStart <= originalStart && filledEnd >= originalEnd) {
-                  // Filled slot completely covers the original slot, do nothing
-                  return false; // Remove the original slot from the array
-                } else if (filledStart <= originalStart) {
-                  // Filled slot overlaps the start of the original slot
-                  originalSlot.start = filledEnd;
-                } else if (filledEnd >= originalEnd) {
-                  // Filled slot overlaps the end of the original slot
-                  originalSlot.end = filledStart;
-                } else {
-                  // Filled slot is within the original slot, split the original slot
-                  originalSlots.push({ start: filledEnd, end: originalEnd });
-                  originalSlot.end = filledStart;
-                }
-              }
-              return true; // Keep the original slot in the array
+              );
             });
+
+            // If there is an overlap, split the original slot
+            if (overlaps) {
+              const splitSlots = [];
+
+              filledSlots.forEach((filledSlot) => {
+                const filledStart = filledSlot.slot.start;
+                const filledEnd = filledSlot.slot.end;
+
+                // Check for overlap with the original slot
+                if (
+                  (filledStart >= originalSlot.start && filledStart < originalSlot.end) ||
+                  (filledEnd > originalSlot.start && filledEnd <= originalSlot.end) ||
+                  (filledStart <= originalSlot.start && filledEnd >= originalSlot.end)
+                ) {
+                  // Split the original slot based on the filled slot
+                  if (filledStart > originalSlot.start) {
+                    splitSlots.push({ start: originalSlot.start, end: filledStart });
+                  }
+
+                  if (filledEnd < originalSlot.end) {
+                    splitSlots.push({ start: filledEnd, end: originalSlot.end });
+                  }
+                }
+              });
+
+              return splitSlots;
+            }
+
+            // If there is no overlap and the slot can accommodate the service time, keep it
+            return (new Date('1970-01-01T' + originalSlot.end + 'Z') -
+              new Date('1970-01-01T' + originalSlot.start + 'Z')) / (1000 * 60) >= serviceTime;
           });
 
-          // Filter out slots that cannot accommodate the service time
-          targetDay[batch] = targetDay[batch].filter((slot) => {
-            // Assuming service time is in minutes
-            const slotDuration =
-              (new Date('1970-01-01T' + slot.end + 'Z') -
-                new Date('1970-01-01T' + slot.start + 'Z')) /
-              (1000 * 60);
-            return slotDuration >= serviceTime;
-          });
+          // Update the original targetDay object with the modified array
+          targetDay[batch] = filteredSlots;
         }
       }
     }
   }
 
-  return washers;
+  return updatedWashers;
 }
+
 
 
 
@@ -515,6 +545,37 @@ export function formatDate(date) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+export function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Distance in km
+  return distance;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+export function formatDate2
+(inputDate) {
+  // Parse the input date string into a Date object
+  const dateObject = new Date(inputDate);
+
+  // Extract year, month, and day components
+  const year = dateObject.getFullYear();
+  const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-based
+  const day = dateObject.getDate().toString().padStart(2, '0');
+
+  // Format the result as "YYYY-MM-DD"
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
+}
 
 
 // api.js

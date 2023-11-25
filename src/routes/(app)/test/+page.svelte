@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
 		// Iterate over each washer in the array
 		for (let i = 0; i < washers.length; i++) {
@@ -103,6 +103,135 @@
 					batchTwo: [{ start: '14:00', end: '15:00' }]
 				},
 				Thursday: {
+					batchOne: [
+						{ start: '09:00', end: '11:00' },
+						{ start: '12:00', end: '13:00' }
+					],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Friday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Saturday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Sunday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				}
+			}
+		},
+		// Washer 2 (additional washer)
+		{
+			address: 'ganesh peth',
+			anchor: { lat: 18.507367, lng: 73.8983946 },
+			collectionId: 'wd1zaum2iv7fm5b',
+			collectionName: 'washers',
+			contact: '9665416321',
+			created: '2023-11-10 06:58:24.868Z',
+			id: 'h6me4o72czl9uc4',
+			name: 'washer2',
+			updated: '2023-11-10 07:38:31.225Z',
+			userId: 'kpdoxuwtn08ogpu',
+			workHours: {
+				Monday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Tuesday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Wednesday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Thursday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Friday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Saturday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Sunday: {
+					batchOne: [{ start: '11:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				}
+			}
+		}
+	];
+
+	const filledSlotsArray = [
+		// Filled Slot 1 (as provided)
+		{
+			collectionId: 'kvhryd2fkb3vkvi',
+			collectionName: 'filledSlots',
+			created: '2023-11-13 02:58:46.715Z',
+			date: '2023-11-17 12:00:00.000Z',
+			id: 'sefbu5xttf85agz',
+			slot: { start: '11:00', end: '12:00' },
+			updated: '2023-11-16 03:22:51.626Z',
+			washerId: '5i8bjvni9n3m1s9'
+		},
+		{
+			collectionId: 'kvhryd2fkb3vkvi',
+			collectionName: 'filledSlots',
+			created: '2023-11-13 02:58:46.715Z',
+			date: '2023-11-17 12:00:00.000Z',
+			id: 'sefbu5xttf85agz',
+			slot: { start: '08:00', end: '09:00' },
+			updated: '2023-11-16 03:22:51.626Z',
+			washerId: '5i8bjvni9n3m1s9'
+		}
+	];
+
+	const targetWeekday = 'Thursday';
+	const serviceTime = 90; // Assuming service time is 90 minutes
+
+	const editedWashers = deleteOverlappingSlotsForWashers(
+		washersArray,
+		filledSlotsArray,
+		targetWeekday,
+		serviceTime
+	);
+	console.log(editedWashers);
+</script> -->
+<script>
+	// Example usage:
+	const washersArray = [
+		// Washer 1 (as provided)
+		{
+			address: 'rasta peth',
+			anchor: { lat: 18.507367, lng: 73.8983946 },
+			collectionId: 'wd1zaum2iv7fm5b',
+			collectionName: 'washers',
+			contact: '9325581756',
+			created: '2023-11-09 18:16:56.255Z',
+			id: '5i8bjvni9n3m1s9',
+			name: 'tejas',
+			updated: '2023-11-16 07:10:21.669Z',
+			userId: 'iqs8bnmqloc0py6',
+			workHours: {
+				Monday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Tuesday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Wednesday: {
+					batchOne: [{ start: '08:00', end: '13:00' }],
+					batchTwo: [{ start: '14:00', end: '15:00' }]
+				},
+				Thursday: {
 					batchOne: [{ start: '08:00', end: '13:00' }],
 					batchTwo: [{ start: '14:00', end: '15:00' }]
 				},
@@ -173,46 +302,34 @@
 			created: '2023-11-13 02:58:46.715Z',
 			date: '2023-11-17 12:00:00.000Z',
 			id: 'sefbu5xttf85agz',
-			slot: { start: '08:00', end: '09:00' },
+			slot: { start: '10:00', end: '11:30' },
 			updated: '2023-11-16 03:22:51.626Z',
 			washerId: '5i8bjvni9n3m1s9'
 		},
-		// Filled Slot 2 (additional filled slot)
 		{
 			collectionId: 'kvhryd2fkb3vkvi',
 			collectionName: 'filledSlots',
-			created: '2023-11-16 03:23:35.798Z',
+			created: '2023-11-13 02:58:46.715Z',
 			date: '2023-11-17 12:00:00.000Z',
-			id: 'tgy8lwpb3tow8s7',
-			slot: { start: '11:00', end: '12:00' },
-			updated: '2023-11-16 03:23:35.798Z',
-			washerId: 'h6me4o72czl9uc4'
+			id: 'sefbu5xttf85agz',
+			slot: { start: '08:00', end: '08:30' },
+			updated: '2023-11-16 03:22:51.626Z',
+			washerId: '5i8bjvni9n3m1s9'
 		},
 		{
 			collectionId: 'kvhryd2fkb3vkvi',
 			collectionName: 'filledSlots',
-			created: '2023-11-16 03:23:35.798Z',
+			created: '2023-11-13 02:58:46.715Z',
 			date: '2023-11-17 12:00:00.000Z',
-			id: 'tgy8lwpb3tow8s7',
-			slot: { start: '14:00', end: '15:00' },
-			updated: '2023-11-16 03:23:35.798Z',
-			washerId: 'h6me4o72czl9uc4'
+			id: 'sefbu5xttf85agz',
+			slot: { start: '14:00', end: '14:30' },
+			updated: '2023-11-16 03:22:51.626Z',
+			washerId: '5i8bjvni9n3m1s9'
 		}
-		// ... (other filled slot objects)
 	];
 
-	const targetWeekday = 'Saturday';
-	const serviceTime = 60; // Assuming service time is 90 minutes
-
-	const editedWashers = deleteOverlappingSlotsForWashers(
-		washersArray,
-		filledSlotsArray,
-		targetWeekday,
-		serviceTime
-	);
-	console.log(editedWashers);
+	// Example usage
+	const targetWeekday = 'Thursday'; // Replace with the desired weekday
+	const result = processWashers(washersArray, filledSlotsArray, targetWeekday);
+	console.log(result);
 </script>
-
-{#each editedWashers as w (w.id)}
-	<p>{JSON.stringify(w)}</p>
-{/each}
