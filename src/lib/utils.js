@@ -283,27 +283,6 @@ export function formatAddress(address) {
 	}
 }
 
-function deepCopy(obj) {
-	if (typeof obj !== 'object' || obj === null) {
-		return obj; // Return non-object types as is
-	}
-
-	if (Array.isArray(obj)) {
-		// If obj is an array, create a new array and deep copy each element
-		return obj.map(deepCopy);
-	}
-
-	// If obj is an object, create a new object and deep copy each property
-	const result = {};
-	for (const key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			result[key] = deepCopy(obj[key]);
-		}
-	}
-
-	return result;
-}
-
 export function deleteOverlappingSlotsForWashers(washers, filledSlots, targetWeekday, serviceTime) {
 	// Create a deep copy of washers to avoid modifying the original array
 	const updatedWashers = structuredClone(washers);
@@ -395,69 +374,53 @@ function checkOverlap(filledSlot, originalSlot) {
 	);
 }
 
-function splitSlot(filledSlot, originalSlot) {
-	const slots = [];
-	const filledStart = timeStringToMinutes(filledSlot.slot.start); // slot: { start: '11:00', end: '12:00' }, slot: { start: '08:00', end: '09:00' },
-	const filledEnd = timeStringToMinutes(filledSlot.slot.end);
-	const originalStart = timeStringToMinutes(originalSlot.start);
-	const originalEnd = timeStringToMinutes(originalSlot.end);
+function splitSlots(originalSlots, filledSlots) {
+	let retval = structuredClone(originalSlots);
 
-	// batchOne: [{ start: '08:00', end: '13:00' }],
-	// batchTwo: [{ start: '14:00', end: '15:00' }]
-	// Split the original slot based on the filled slot
-	// console.log({filledSlot, originalSlot, filledStart, filledEnd, originalStart, originalEnd})
-	if (filledStart >= originalStart) {
-		slots.push({ start: originalSlot.start, end: filledSlot.slot.start });
-	}
-
-	if (filledEnd < originalEnd) {
-		slots.push({ start: filledSlot.slot.end, end: originalSlot.end });
-	}
-	return slots;
-}
-
-function splitSlots(originalSlot, filledSlots) {
-	const retval = originalSlot
-	const originalStart = timeStringToMinutes(originalSlot.start);
-	const originalEnd = timeStringToMinutes(originalSlot.end);
 	for (const filledSlot of filledSlots) {
-		const hasOverlap = checkOverlap(filledSlot, originalSlot)
-		if (!hasOverlap) continue
 		const filledStart = timeStringToMinutes(filledSlot.slot.start); // slot: { start: '11:00', end: '12:00' }, slot: { start: '08:00', end: '09:00' },
 		const filledEnd = timeStringToMinutes(filledSlot.slot.end);
-		
-		
-		// if exactly same remove the slot
-		if (filledStart === originalStart && filledEnd === originalEnd) return retval
+		retval = retval.flatMap((originalSlot) => {
+			const hasOverlap = checkOverlap(filledSlot, originalSlot);
+			if (!hasOverlap) return originalSlot;
+			const originalStart = timeStringToMinutes(originalSlot.start);
+			const originalEnd = timeStringToMinutes(originalSlot.end);
 
-		// if filled slot is in b/w original slot, remove filled slot chunk
-		if (filledStart >= originalStart && filledEnd <= originalEnd) retval = [
-			{
-				start: originalSlot.start,
-				end: filledSlot.slot.start
-			},
-			{
-				start: filledSlot.slot.end,
-				end: originalSlot.end
-			}
-		];
-		// if filled slot starts is in b/w original slot, but ends after it
-		if (filledStart >= originalStart && filledEnd >= originalEnd) retval = [
-			{
-				start: originalSlot.start,
-				end: filledSlot.slot.start
-			},
-		]
-		// if filled slot starts before original slot, but ends inside it
-		if (filledStart <= originalStart && filledEnd <= originalEnd) retval.push([
-			{
-				end: originalSlot.end,
-				start: filledSlot.slot.end
-			},
-		])
+			// if exactly same remove the slot
+			if (filledStart === originalStart && filledEnd === originalEnd) return [];
+
+			// if filled slot is in b/w original slot, remove filled slot chunk
+			if (filledStart >= originalStart && filledEnd <= originalEnd)
+				return [
+					{
+						start: originalSlot.start,
+						end: filledSlot.slot.start
+					},
+					{
+						start: filledSlot.slot.end,
+						end: originalSlot.end
+					}
+				];
+
+			// if filled slot starts is in b/w original slot, but ends after it
+			if (filledStart >= originalStart && filledEnd >= originalEnd)
+				return [
+					{
+						start: originalSlot.start,
+						end: filledSlot.slot.start
+					}
+				];
+			// if filled slot starts before original slot, but ends inside it
+			if (filledStart <= originalStart && filledEnd <= originalEnd)
+				return [
+					{
+						end: originalSlot.end,
+						start: filledSlot.slot.end
+					}
+				];
+		});
 	}
-	console.log(4,retval)
-	return retval
+	return retval;
 }
 
 export function deleteOverlappingSlotsForWashers2(
@@ -473,13 +436,12 @@ export function deleteOverlappingSlotsForWashers2(
 		const targetDay = washer.workHours[targetWeekday];
 		// Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
 		for (const batch in targetDay) {
-			targetDay[batch] = targetDay[batch]
-				.flatMap((originalSlot) => splitSlots(originalSlot, filledSlots))
+			targetDay[batch] = splitSlots(targetDay[batch], filledSlots)
 				// Filter out slots that cannot accommodate the service time
 				.filter(
-					(originalSlot) =>
-						(new Date('1970-01-01T' + originalSlot.end + 'Z') -
-							new Date('1970-01-01T' + originalSlot.start + 'Z')) /
+					(slot) =>
+						(new Date('1970-01-01T' + slot.end + 'Z') -
+							new Date('1970-01-01T' + slot.start + 'Z')) /
 							(1000 * 60) >=
 						serviceTime
 				);
