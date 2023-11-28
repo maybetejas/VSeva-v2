@@ -10,7 +10,7 @@
 			<slot />
 		</Transition>
 	</div>
-	
+
 	<div class="btm-nav btm-nav-md">
 		<button class:active={$page.url.pathname === '/'}>
 			<a href="/" class="flex flex-col items-center">

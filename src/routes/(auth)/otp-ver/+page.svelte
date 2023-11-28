@@ -12,6 +12,7 @@
 
 	export let data;
 </script>
+
 <main class="h-screen w-full flex items-start justify-center">
 	<form
 		method="POST"

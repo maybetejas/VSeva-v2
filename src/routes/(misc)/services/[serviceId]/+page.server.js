@@ -1,7 +1,7 @@
-import { currentCar, currentCarSize } from "../../../../lib/utils"
+import { currentCar, currentCarSize } from '../../../../lib/utils';
 
 export const load = async () => {
-    let carname;
+	let carname;
 	let carsize;
 
 	currentCar.subscribe((data) => {
@@ -10,9 +10,10 @@ export const load = async () => {
 
 	currentCarSize.subscribe((data) => {
 		carsize = data;
-    });
-    
-    return {
-        carname, carsize
-    }
-}
+	});
+
+	return {
+		carname,
+		carsize
+	};
+};

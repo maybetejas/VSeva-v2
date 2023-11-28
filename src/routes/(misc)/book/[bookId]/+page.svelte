@@ -5,6 +5,7 @@
 		calculateTime,
 		currentCarSize,
 		deleteOverlappingSlotsForWashers,
+		deleteOverlappingSlotsForWashers2,
 		formatDate2,
 		getDistance
 	} from './../../../../lib/utils.js';
@@ -18,7 +19,7 @@
 	const pb = new PocketBase(PUBLIC_DB_URL);
 	pb.autoCancellation(false);
 
-	let availableSlots = [];
+	let availableSlots = {};
 	let filteredWashers = []; //filtered list off washers in the users area
 	let filledSlotsForSelectedDate = []; //realtime dynamic raray that chnages based on the selectedDate and
 	// conatines filled slost for the date for every washer in the
@@ -71,21 +72,24 @@
 	});
 
 	//reacting to the changes made in the date by the user
-	$: (async () => {
-		if (selectedDate) {
-			await filterFilledSlotsByWashers();
-		}
-	})();
+	$: init(selectedDate);
+
+	async function init(selectedDate) {
+		await filterFilledSlotsByWashers();
+		availableSlots = deleteOverlappingSlotsForWashers2(
+			filteredWashers,
+			filledSlotsForSelectedDate,
+			day,
+			time.slotTaken
+		);
+		console.log('this', availableSlots);
+	}
 
 	async function filterFilledSlotsByWashers() {
-		filledSlotsForSelectedDate = await Promise.all(
-			filteredWashers.map(async (washer) => {
-				const slotsForWasher = await getFilledSlotsForDate(selectedDate);
-				const filteredSlots = slotsForWasher.filter((slot) => slot.washerId === washer.id);
-				return filteredSlots;
-			})
+		const slotsForWasher = await getFilledSlotsForDate(selectedDate);
+		filledSlotsForSelectedDate = filteredWashers.flatMap((washer) =>
+			slotsForWasher.filter((slot) => slot.washerId === washer.id)
 		);
-		filledSlotsForSelectedDate = filledSlotsForSelectedDate.flat();
 		console.log('filledSlots by date array: ', filledSlotsForSelectedDate);
 	}
 

@@ -18,7 +18,7 @@
 	<div class="navbar bg-base-100">
 		<div class="flex-1">
 			<div>
-				<span class="flex"><img src="carLogo.svg" alt="" class="w-6"><CarSelection /></span>
+				<span class="flex"><img src="carLogo.svg" alt="" class="w-6" /><CarSelection /></span>
 			</div>
 		</div>
 

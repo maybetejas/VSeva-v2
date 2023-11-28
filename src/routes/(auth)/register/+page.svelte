@@ -36,7 +36,6 @@
 						class="input input-bordered w-full"
 					/>
 				</label>
-				
 			</div>
 			<div class="w-full fleex flex-col">
 				<details class="dropdown mb-32">
