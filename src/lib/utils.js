@@ -422,36 +422,98 @@ function splitSlots(originalSlots, filledSlots) {
 	}
 	return retval;
 }
+export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
+	const result = [];
+  
+	workers.forEach(worker => {
+	  const workerId = worker.id;
+	  const workerWorkHours = worker.workHours[targetWeekday];
+  
+	  if (workerWorkHours) {
+		Object.keys(workerWorkHours).forEach(batchKey => {
+		  const batch = workerWorkHours[batchKey];
+  
+		  batch.forEach(timeRange => {
+			const { start, end } = timeRange;
+			const startTime = new Date(`2023-01-01T${start}`);
+			const endTime = new Date(`2023-01-01T${end}`);
+  
+			while (startTime.getTime() + serviceTimeInMinutes * 60 * 1000 <= endTime.getTime()) {
+			  const slotEnd = new Date(startTime.getTime() + serviceTimeInMinutes * 60 * 1000);
+			  const newSlot = {
+				id: workerId,
+				slot: {
+				  start: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+				  end: slotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+				}
+			  };
+  
+			  // Check if a similar slot already exists in the result array
+			  const similarSlotIndex = result.findIndex(existingSlot =>
+				areSlotsEqual(existingSlot.slot, newSlot.slot)
+			  );
+  
+			  if (similarSlotIndex === -1) {
+				result.push(newSlot);
+			  } else {
+				// If a similar slot exists, randomly choose one
+				if (Math.random() < 0.5) {
+				  result[similarSlotIndex] = newSlot;
+				}
+			  }
+  
+			  startTime.setTime(slotEnd.getTime());
+			}
+		  });
+		});
+	  }
+	});
+  
+	return result;
+  }
+  
+  // Helper function to check if two slots are equal
+  function areSlotsEqual(slot1, slot2) {
+	return slot1.start === slot2.start && slot1.end === slot2.end;
+  }
+  
+  
+// utils.js
 
 export function deleteOverlappingSlotsForWashers2(
-	washers,
-	filledSlots,
-	targetWeekday,
-	serviceTime
+    washers,
+    filledSlots,
+    targetWeekday,
+    serviceTime
 ) {
-	const updatedWashers = structuredClone(washers);
-	for (const washer of updatedWashers) {
-		// Check if the target weekday exists in the workHours object of the current washer
-		if (!washer.workHours.hasOwnProperty(targetWeekday)) continue;
-		const targetDay = washer.workHours[targetWeekday];
-		// Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
-		for (const batch in targetDay) {
-			targetDay[batch] = splitSlots(targetDay[batch], filledSlots)
-				// Filter out slots that cannot accommodate the service time
-				.filter(
-					(slot) =>
-						(new Date('1970-01-01T' + slot.end + 'Z') -
-							new Date('1970-01-01T' + slot.start + 'Z')) /
-							(1000 * 60) >=
-						serviceTime
-				);
-		}
-	}
+    const updatedWashers = structuredClone(washers);
 
-	return updatedWashers;
+    for (const washer of updatedWashers) {
+        // Check if the target weekday exists in the workHours object of the current washer
+        if (!washer.workHours.hasOwnProperty(targetWeekday)) continue;
+
+        const targetDay = washer.workHours[targetWeekday];
+
+        // Filter filledSlots for the current washer
+        const washerFilledSlots = filledSlots.filter(slot => slot.washerId === washer.id);
+
+        // Iterate over the batches (batchOne, batchTwo, etc.) in the target weekday
+        for (const batch in targetDay) {
+            targetDay[batch] = splitSlots(targetDay[batch], washerFilledSlots)
+                // Filter out slots that cannot accommodate the service time
+                .filter(
+                    (slot) =>
+                        (new Date('1970-01-01T' + slot.end + 'Z') -
+                            new Date('1970-01-01T' + slot.start + 'Z')) /
+                        (1000 * 60) >=
+                        serviceTime
+                );
+        }
+    }
+
+    return updatedWashers;
 }
 
-// utils.js
 
 export function calculatePrice(carSize, serviceType) {
 	const basePrices = {
@@ -512,7 +574,7 @@ export function calculateTime(carSize, serviceType) {
 	// Define base times for different car sizes and service types
 	const baseTimes = {
 		compact: {
-			interior: { timeTaken: 60, slotTaken: 90 },
+			interior: { timeTaken: 60, slotTaken: 60 },
 			exterior: { timeTaken: 60, slotTaken: 90 },
 			fullBody: { timeTaken: 120, slotTaken: 150 }
 		},

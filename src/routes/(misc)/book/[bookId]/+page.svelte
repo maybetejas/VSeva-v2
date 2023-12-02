@@ -4,10 +4,10 @@
 		calculatePrice,
 		calculateTime,
 		currentCarSize,
-		deleteOverlappingSlotsForWashers,
 		deleteOverlappingSlotsForWashers2,
 		formatDate2,
-		getDistance
+		getDistance,
+		splitTimeSlots
 	} from './../../../../lib/utils.js';
 	import Rain from '$lib/components/Rain.svelte';
 	import { servicesList } from '$lib/utils.js';
@@ -20,6 +20,7 @@
 	pb.autoCancellation(false);
 
 	let availableSlots = {};
+	let displaySlots = [];
 	let filteredWashers = []; //filtered list off washers in the users area
 	let filledSlotsForSelectedDate = []; //realtime dynamic raray that chnages based on the selectedDate and
 	// conatines filled slost for the date for every washer in the
@@ -32,6 +33,7 @@
 	let name = '';
 	let link = '';
 	let services = [];
+	let selectedSlot = {};
 
 	if (selectedService) {
 		name = selectedService.name;
@@ -55,7 +57,6 @@
 	//initialising the washers in your area everytime the page first loads or is mounted
 	onMount(async () => {
 		filteredWashers = await getWashers();
-		console.log('washers: ', filteredWashers);
 		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
 			if ($currentCarSize === 'compact') {
 				const oldCarSize = localStorage?.getItem('carSize');
@@ -69,6 +70,7 @@
 	///realtime subscribed to the array
 	pb.collection('filledSlots').subscribe('*', async (e) => {
 		filterFilledSlotsByWashers();
+		init(selectedDate);
 	});
 
 	//reacting to the changes made in the date by the user
@@ -82,7 +84,7 @@
 			day,
 			time.slotTaken
 		);
-		console.log('this', availableSlots);
+		displaySlots = splitTimeSlots(availableSlots, day, time.slotTaken);
 	}
 
 	async function filterFilledSlotsByWashers() {
@@ -90,7 +92,6 @@
 		filledSlotsForSelectedDate = filteredWashers.flatMap((washer) =>
 			slotsForWasher.filter((slot) => slot.washerId === washer.id)
 		);
-		console.log('filledSlots by date array: ', filledSlotsForSelectedDate);
 	}
 
 	//getting the washers in users vicinity
@@ -115,6 +116,12 @@
 			filter: `date >= '${formattedDate} 00:00:00' && date <= '${formattedDate} 23:59:59'`
 		});
 		return slots;
+	}
+
+	let showPopup = false;
+
+	function togglePopup() {
+		showPopup = !showPopup;
 	}
 
 	onDestroy(() => {
@@ -145,11 +152,58 @@
 	</div>
 	<br /><br />
 	<div />
-	{#if triggerRain}
+	<div>
+		{#if availableSlots.length === 0}
+			<p>please select a date first</p>
+		{/if}
+		{#if availableSlots.length !== 0}
+			{#if displaySlots.length === 0}
+				<p>no slots available for this date</p>
+			{:else}
+				{#each displaySlots as ds}
+					<button
+						class="btn {selectedSlot === ds.slot ? 'btn-secondary btn-outline' : 'btn-ghost'}"
+						on:click={() => {
+							selectedSlot = ds.slot;
+						}}>{ds.slot.start}</button
+					>
+				{/each}
+			{/if}
+		{/if}
+	</div>
+	{#if showPopup}
+		<div
+			on:click={togglePopup}
+			class="w-full h-full backdrop-blur-sm absolute flex flex-col justify-center"
+		>
+			<div class="card w-96 bg-primary text-primary-content">
+				<div class="card-body">
+					<h2 class="card-title">{name}</h2>
+					<p>Confirm your order 🚗:</p>
+					<ul>
+						<li>Service: {name} 🧼</li>
+						<li>Date and Time: {selectedDate} {selectedSlot} 🕒</li>
+						<li>Cancel anytime if the reason is valid ❌</li>
+						<li>No additional services outside order 🚫</li>
+						<li>Remove valuables before service 💍</li>
+						<li>Park car in shade if possible ☂️</li>
+					</ul>
+					<div class="card-actions justify-end">
+						<button class="btn">Confirm</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<div>
+		<button class="btn btn-secondary w-full mt-96" on:click={togglePopup}>BOOK</button>
+	</div>
+	<!-- {#if triggerRain}
 		<Rain />
 		<a href="/"><button on:click={rain} class="btn btn-secondary w-11/12">Go to bookings</button></a
 		>
 	{:else}
 		<button on:click={rain} class="btn btn-secondary w-11/12">Book</button>
-	{/if}
+	{/if} -->
 </div>
