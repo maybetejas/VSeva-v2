@@ -7,7 +7,8 @@
 		deleteOverlappingSlotsForWashers2,
 		formatDate2,
 		getDistance,
-		splitTimeSlots
+		splitTimeSlots,
+		textDateToUTC
 	} from './../../../../lib/utils.js';
 	import Rain from '$lib/components/Rain.svelte';
 	import { servicesList } from '$lib/utils.js';
@@ -16,9 +17,23 @@
 	import { PUBLIC_DB_URL } from '$env/static/public';
 	import PocketBase from 'pocketbase';
 
+	//initialising the washers in your area everytime the page first loads or is mounted
+	onMount(async () => {
+		filteredWashers = await getWashers();
+		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+			if ($currentCarSize === 'compact') {
+				const oldCarSize = localStorage?.getItem('carSize');
+				if (oldCarSize) {
+					currentCarSize.set(oldCarSize);
+				}
+			}
+		}
+	});
+
 	const pb = new PocketBase(PUBLIC_DB_URL);
 	pb.autoCancellation(false);
 
+	export let data;
 	let availableSlots = {};
 	let displaySlots = [];
 	let filteredWashers = []; //filtered list off washers in the users area
@@ -34,6 +49,8 @@
 	let link = '';
 	let services = [];
 	let selectedSlot = {};
+	let selectedWasherId = '';
+	let selectedWasherContact = '';
 
 	if (selectedService) {
 		name = selectedService.name;
@@ -53,19 +70,6 @@
 	let day = '';
 	$: day = selectedDate.toLocaleString('default', { weekday: 'long' });
 	const time = calculateTime($currentCarSize, name);
-
-	//initialising the washers in your area everytime the page first loads or is mounted
-	onMount(async () => {
-		filteredWashers = await getWashers();
-		if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-			if ($currentCarSize === 'compact') {
-				const oldCarSize = localStorage?.getItem('carSize');
-				if (oldCarSize) {
-					currentCarSize.set(oldCarSize);
-				}
-			}
-		}
-	});
 
 	///realtime subscribed to the array
 	pb.collection('filledSlots').subscribe('*', async (e) => {
@@ -124,6 +128,31 @@
 		showPopup = !showPopup;
 	}
 
+	async function placeOrder() {
+		const order = {
+			slot: selectedSlot,
+			userId: data?.user?.id,
+			service: name,
+			date: textDateToUTC(selectedDate),
+			washerId: selectedWasherId,
+			location: localStorage?.getItem('coords'),
+			userContact: data?.user?.contact,
+			washerContact: selectedWasherContact,
+			car: localStorage?.getItem('car'),
+			carSize: localStorage?.getItem('carSize'),
+			address: localStorage?.getItem('address')
+		};
+
+		try {
+			const record = await pb.collection('filledSlots').create(order);
+			if (record) {
+				window.location.href = '/';
+			}
+		} catch (error) {
+			return error;
+		}
+	}
+
 	onDestroy(() => {
 		pb.collection('filledSlots').unsubscribe('*');
 	});
@@ -165,6 +194,8 @@
 						class="btn {selectedSlot === ds.slot ? 'btn-secondary btn-outline' : 'btn-ghost'}"
 						on:click={() => {
 							selectedSlot = ds.slot;
+							selectedWasherId = ds.id;
+							selectedWasherContact = ds.contact;
 						}}>{ds.slot.start}</button
 					>
 				{/each}
@@ -188,9 +219,7 @@
 						<li>Remove valuables before service 💍</li>
 						<li>Park car in shade if possible ☂️</li>
 					</ul>
-					<div class="card-actions justify-end">
-						<button class="btn">Confirm</button>
-					</div>
+					<button class="btn" on:click={placeOrder}>Confirm</button>
 				</div>
 			</div>
 		</div>

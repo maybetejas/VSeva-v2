@@ -422,11 +422,13 @@ function splitSlots(originalSlots, filledSlots) {
 	}
 	return retval;
 }
+
 export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
 	const result = [];
   
 	workers.forEach(worker => {
 	  const workerId = worker.id;
+	  const workerNum = worker.contact;
 	  const workerWorkHours = worker.workHours[targetWeekday];
   
 	  if (workerWorkHours) {
@@ -442,9 +444,10 @@ export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
 			  const slotEnd = new Date(startTime.getTime() + serviceTimeInMinutes * 60 * 1000);
 			  const newSlot = {
 				id: workerId,
+				contact: workerNum,
 				slot: {
-				  start: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-				  end: slotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+				  start: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+				  end: slotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
 				}
 			  };
   
@@ -477,6 +480,78 @@ export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
 	return slot1.start === slot2.start && slot1.end === slot2.end;
   }
   
+
+// export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
+// 	const result = [];
+  
+// 	workers.forEach(worker => {
+// 		const workerId = worker.id;
+// 		const workerNum = worker.contact;
+// 	  const workerWorkHours = worker.workHours[targetWeekday];
+  
+// 	  if (workerWorkHours) {
+// 		Object.keys(workerWorkHours).forEach(batchKey => {
+// 		  const batch = workerWorkHours[batchKey];
+  
+// 		  batch.forEach(timeRange => {
+// 			const { start, end } = timeRange;
+// 			const startTime = new Date(`2023-01-01T${start}`);
+// 			const endTime = new Date(`2023-01-01T${end}`);
+  
+// 			while (startTime.getTime() + serviceTimeInMinutes * 60 * 1000 <= endTime.getTime()) {
+// 			  const slotEnd = new Date(startTime.getTime() + serviceTimeInMinutes * 60 * 1000);
+// 			  const newSlot = {
+// 				  id: workerId,
+// 				  contact: workerNum,
+// 				slot: {
+// 				  start: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+// 				  end: slotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+// 				}
+// 			  };
+  
+// 			  // Check if a similar slot already exists in the result array
+// 			  const similarSlotIndex = result.findIndex(existingSlot =>
+// 				areSlotsEqual(existingSlot.slot, newSlot.slot)
+// 			  );
+  
+// 			  if (similarSlotIndex === -1) {
+// 				result.push(newSlot);
+// 			  } else {
+// 				// If a similar slot exists, randomly choose one
+// 				if (Math.random() < 0.5) {
+// 				  result[similarSlotIndex] = newSlot;
+// 				}
+// 			  }
+  
+// 			  startTime.setTime(slotEnd.getTime());
+// 			}
+// 		  });
+// 		});
+// 	  }
+// 	});
+  
+// 	return result;
+//   }
+  
+//   // Helper function to check if two slots are equal
+//   function areSlotsEqual(slot1, slot2) {
+// 	return slot1.start === slot2.start && slot1.end === slot2.end;
+//   }
+  
+  export function textDateToUTC(inputDate) {
+    const dateObject = new Date(inputDate);
+
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+    const hours = '12';
+    const minutes = '00';
+    const seconds = '00';
+
+    const customFormatDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    
+    return customFormatDate;
+}
   
 // utils.js
 
@@ -574,7 +649,7 @@ export function calculateTime(carSize, serviceType) {
 	// Define base times for different car sizes and service types
 	const baseTimes = {
 		compact: {
-			interior: { timeTaken: 60, slotTaken: 60 },
+			interior: { timeTaken: 60, slotTaken: 90 },
 			exterior: { timeTaken: 60, slotTaken: 90 },
 			fullBody: { timeTaken: 120, slotTaken: 150 }
 		},
