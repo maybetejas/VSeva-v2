@@ -1,4 +1,4 @@
-<!-- <script>
+<script>
 	import { workHours } from '$lib/utils.js';
 
 	export let form;
@@ -32,6 +32,7 @@
 				selectedWorkHours[day] = {};
 			}
 		}
+		console.log(selectedWorkHours);
 	}
 
 	function convertBatchesToArray(workHours) {
@@ -50,7 +51,7 @@
 		}
 		return workHours;
 	}
-	console.log(convertBatchesToArray(selectedWorkHours));
+	console.log(selectedWorkHours);
 </script>
 
 {#each Object.keys(workHours) as day}
@@ -99,8 +100,8 @@
 <form id="workHoursForm" action="?/saveWorkHours" method="post">
 	<input value={JSON.stringify(selectedWorkHours)} type="hidden" name="work" />
 	<button class="btn btn-primary" on:click={saveWorkHours}>Save</button>
-</form> -->
-
+</form>
+<!-- 
 <script>
 	import { workHours } from '$lib/utils.js';
 
@@ -188,4 +189,4 @@
 <form id="workHoursForm" action="?/saveWorkHours" method="post">
 	<input value={JSON.stringify(selectedWorkHours)} type="hidden" name="work" />
 	<button class="btn btn-primary" on:click={saveWorkHours}>Save</button>
-</form>
+</form> -->

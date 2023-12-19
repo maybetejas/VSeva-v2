@@ -2,7 +2,7 @@
 	export let data;
 </script>
 
-<main class="h-full w-full flex flex-col items-center">
+<main class="h-screen w-full flex flex-col items-center">
 	<div class="navbar bg-base-100">
 		<div class="flex-none">
 			<div class="dropdown">
@@ -28,6 +28,7 @@
 					{#if data?.washer}
 						<li><a href="/washer/washer-bookings">washer orders</a></li>
 						<li><a href="/washer/washer-profile">washer profile</a></li>
+						<li><a href="/washer/washer-work-hours">washer workhours</a></li>
 					{/if}
 				</ul>
 			</div>

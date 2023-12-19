@@ -26,7 +26,7 @@
 	<div class="flex w-11/12 items-center">
 		{#each nextDates as date}
 			<button
-				class="btn {selectedDate === date ? 'btn-accent btn-outline' : 'btn-ghost'} flex"
+				class="btn btn-sm {selectedDate === date ? 'btn-accent btn-outline' : 'btn-ghost'} flex"
 				on:click={() => handleDateSelection(date)}
 			>
 				<p class="text-sm">{date.getDate()}</p>

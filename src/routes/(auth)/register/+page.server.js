@@ -9,7 +9,6 @@ export const actions = {
 		const formData = await request.formData();
 		const address = formData.get('address');
 		const contact = formData.get('contact');
-		const car = formData.get('car');
 
 		const pb = new PocketBase(PUBLIC_DB_URL);
 
@@ -26,7 +25,6 @@ export const actions = {
 		const data = {
 			address,
 			userAuthToken: crypto.randomUUID(),
-			car: car,
 			contact,
 			otp
 		};

@@ -76,7 +76,7 @@
 	type="text"
 	placeholder={$currentCar}
 	bind:value={searchQuery}
-	class="input input-sm w-full max-w-xs"
+	class="input input-sm w-full max-w-xs placeholder-black"
 />
 
 <ul>

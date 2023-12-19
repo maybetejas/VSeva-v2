@@ -79,6 +79,20 @@ export function cycleGreetings(greetings, intervalTime) {
 	return () => clearInterval(interval);
 }
 
+export function formatDateForBookings(inputDate) {
+	const date = new Date(inputDate);
+	
+	const options = {
+	  weekday: 'short', // Short day name (e.g., Thu)
+	  day: 'numeric',   // Day of the month (1-31)
+	};
+  
+	const formatter = new Intl.DateTimeFormat('en-US', options);
+	const formattedDate = formatter.format(date);
+  
+	return formattedDate;
+  }
+
 export const greetings = [
 	'Hello', // English
 	'नमस्ते', // Hindi
@@ -93,11 +107,16 @@ export const greetings = [
 	'హలో' // Telugu
 ];
 
+export function toCamelCase(str) {
+	return str.replace(/[-_]\w/g, match => match.charAt(1).toUpperCase());
+  }
+  
+
 export const servicesList = [
 	{
 		id: 1,
-		svg: 'car.svg',
-		name: 'interior',
+		svg: 'interiordeep.svg',
+		name: 'Interior',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
 		services: [
 			'Exterior wash',
@@ -107,30 +126,120 @@ export const servicesList = [
 			'Dashboard polish',
 			'Tyre polish',
 			'Exterior Wax'
+		],
+		addons: [
+			{
+				name: "paper mat",
+				price: 10
+			},
+			{
+				name: "air freshner",
+				price: 10
+			}
 		]
+		
 	},
 	{
 		id: 2,
-		svg: 'car.svg',
-		name: 'exterior',
+		svg: 'car wash.svg',
+		name: 'Exterior',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Exterior wash', 'Tyre wash', 'Mud guard wash', 'Windshield wash', 'Wax']
+		services: ['Exterior wash', 'Tyre wash', 'Mud guard wash', 'Windshield wash', 'Wax'],
+		addons: [
+			{
+				name: "paper mat",
+				price: 10
+			},
+			{
+				name: "air freshner",
+				price: 10
+			}
+		]
 	},
 	{
 		id: 3,
-		svg: 'car.svg',
-		name: 'fullBody',
+		svg: 'deluxe-detail.svg',
+		name: 'Full body',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish']
+		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
+		addons: [
+			{
+				name: "paper mat",
+				price: 10
+			},
+			{
+				name: "air freshner",
+				price: 10
+			}
+		]
 	},
 	{
 		id: 4,
-		svg: 'car.svg',
-		name: 'waterless',
+		svg: 'bike.svg',
+		name: 'Bike',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish']
-	}
+		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
+		addons: [
+			{
+				name: "paper mat",
+				price: 10
+			},
+			{
+				name: "air freshner",
+				price: 10
+			}
+		]
+	},
+	// {
+	// 	id: 5,
+	// 	svg: 'car.svg',
+	// 	name: 'waterless',
+	// 	link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
+	// 	services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
+	// 	addons: [
+	// 		{
+	// 			name: "paper mat",
+	// 			price: 10
+	// 		},
+	// 		{
+	// 			name: "air freshner",
+	// 			price: 10
+	// 		}
+	// 	]
+	// },
+	// {
+	// 	id: 6,
+	// 	svg: 'car.svg',
+	// 	name: 'waterless',
+	// 	link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
+	// 	services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
+	// 	addons: [
+	// 		{
+	// 			name: "paper mat",
+	// 			price: 10
+	// 		},
+	// 		{
+	// 			name: "air freshner",
+	// 			price: 10
+	// 		}
+	// 	]
+	// }
 ];
+
+export function getServicesArray(serviceName) {
+	// Find the object in servicesList that matches the given serviceName
+	const serviceObject = servicesList.find(service => service.name === serviceName);
+  
+	// Check if the serviceObject is found
+	if (serviceObject) {
+	  // Extract and return the services array from the found object
+	  return serviceObject.services;
+	} else {
+	  // If no matching serviceObject is found, return an empty array or handle as needed
+	  return [];
+	}
+  }
+
 
 export const subscriptions = [
 	{
@@ -138,21 +247,39 @@ export const subscriptions = [
 		svg: 'location.svg',
 		name: 'weekly',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Tyres', 'Windows', 'Panels', 'lights', 'Rims']
+		services: ['Tyres', 'Windows', 'Panels', 'lights', 'Rims'],
+		addons: [
+			{
+				"paper mat": 10,
+				"air freshner": 10
+			}
+		]
 	},
 	{
 		id: 8,
 		svg: 'location.svg',
 		name: 'bi-weekly',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Tyres', 'Windows']
+		services: ['Tyres', 'Windows'],
+		addons: [
+			{
+				"paper mat": 10,
+				"air freshner": 10
+			}
+		]
 	},
 	{
 		id: 9,
 		svg: 'location.svg',
 		name: 'Monthly',
 		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['lights', 'Rims', 'Rims', 'Rims', 'Rims']
+		services: ['lights', 'Rims', 'Rims', 'Rims', 'Rims'],
+		addons: [
+			{
+				"paper mat": 10,
+				"air freshner": 10
+			}
+		]
 	}
 ];
 
@@ -423,6 +550,24 @@ function splitSlots(originalSlots, filledSlots) {
 	return retval;
 }
 
+export function convertTo12HourFormat(time24) {
+	// Extract hours and minutes from the time string
+	const [hour, minute] = time24.split(':');
+  
+	// Convert the hour to 12-hour format
+	let hour12 = parseInt(hour, 10);
+	const ampm = hour12 >= 12 ? 'PM' : 'AM';
+  
+	// Adjust the hour for 12-hour format
+	hour12 = hour12 % 12 || 12;
+  
+	// Pad single-digit minutes with a leading zero
+	const minutePadded = minute.padStart(2, '0');
+  
+	// Return the formatted time
+	return `${hour12}:${minutePadded} ${ampm}`;
+  }
+
 export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
 	const result = [];
   
@@ -593,39 +738,39 @@ export function deleteOverlappingSlotsForWashers2(
 export function calculatePrice(carSize, serviceType) {
 	const basePrices = {
 		compact: {
-			interior: 350,
-			exterior: 250,
-			fullBody: 575
+			Interior: 350,
+			Exterior: 250,
+			"Full Body": 575
 		},
-		midsize: {
-			interior: 350 * 1.15,
-			exterior: 250 * 1.15,
-			fullBody: 575 * 1.15
+		midsIze: {
+			Interior: 350 * 1.15,
+			Exterior: 250 * 1.15,
+			"Full Body": 575 * 1.15
 		},
 		fullsize: {
-			interior: 350 * 1.3,
-			exterior: 250 * 1.3,
-			fullBody: 575 * 1.3
+			Interior: 350 * 1.3,
+			Exterior: 250 * 1.3,
+			"Full Body": 575 * 1.3
 		},
 		hatchback: {
-			interior: 350 * 1.1,
-			exterior: 250 * 1.1,
-			fullBody: 575 * 1.1
+			Interior: 350 * 1.1,
+			Exterior: 250 * 1.1,
+			"Full Body": 575 * 1.1
 		},
 		sedan: {
-			interior: 350 * 1.2,
-			exterior: 250 * 1.2,
-			fullBody: 575 * 1.2
+			Interior: 350 * 1.2,
+			Exterior: 250 * 1.2,
+			"Full Body": 575 * 1.2
 		},
 		suv: {
-			interior: 350 * 1.25,
-			exterior: 250 * 1.25,
-			fullBody: 575 * 1.25
+			Interior: 350 * 1.25,
+			Exterior: 250 * 1.25,
+			"Full Body": 575 * 1.25
 		},
 		muv: {
-			interior: 350 * 1.35,
-			exterior: 250 * 1.35,
-			fullBody: 575 * 1.35
+			Interior: 350 * 1.35,
+			Exterior: 250 * 1.35,
+			"Full Body": 575 * 1.35
 		}
 	};
 
@@ -645,43 +790,60 @@ export function calculatePrice(carSize, serviceType) {
 	}
 }
 
+export function convertTo12HourFormat2(time24Hour) {
+    // Split the time string into hours and minutes
+    const [hours, minutes] = time24Hour.split(':').map(Number);
+
+    // Determine the period (AM or PM)
+    const period = hours < 12 ? 'AM' : 'PM';
+
+    // Convert hours to 12-hour format
+    const hours12Hour = hours % 12 === 0 ? 12 : hours % 12;
+
+    // Format the time in 12-hour format
+    const time12Hour = `${hours12Hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+
+    return time12Hour;
+}
+
+
 export function calculateTime(carSize, serviceType) {
 	// Define base times for different car sizes and service types
 	const baseTimes = {
 		compact: {
-			interior: { timeTaken: 60, slotTaken: 90 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 120, slotTaken: 150 }
+			Interior: { timeTaken: 60, slotTaken: 90 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 120, slotTaken: 150 }
 		},
 		midsize: {
-			interior: { timeTaken: 60, slotTaken: 90 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 120, slotTaken: 150 }
+			Interior: { timeTaken: 60, slotTaken: 90 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 120, slotTaken: 150 }
 		},
 		fullsize: {
-			interior: { timeTaken: 90, slotTaken: 120 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 150, slotTaken: 180 }
+			Interior: { timeTaken: 90, slotTaken: 120 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 150, slotTaken: 180 }
 		},
 		hatchback: {
-			interior: { timeTaken: 60, slotTaken: 90 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 120, slotTaken: 150 }
+			Interior: { timeTaken: 60, slotTaken: 90 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 120, slotTaken: 150 }
 		},
 		sedan: {
-			interior: { timeTaken: 90, slotTaken: 120 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 150, slotTaken: 180 }
+			Interior: { timeTaken: 90, slotTaken: 120 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 150, slotTaken: 180 }
 		},
 		suv: {
-			interior: { timeTaken: 120, slotTaken: 150 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 180, slotTaken: 210 }
+			Interior: { timeTaken: 120, slotTaken: 150 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 180, slotTaken: 210 }
 		},
 		muv: {
-			interior: { timeTaken: 120, slotTaken: 150 },
-			exterior: { timeTaken: 60, slotTaken: 90 },
-			fullBody: { timeTaken: 180, slotTaken: 210 }
+			Interior: { timeTaken: 120, slotTaken: 150 },
+			Exterior: { timeTaken: 60, slotTaken: 90 },
+			"Full Body": { timeTaken: 180, slotTaken: 210 }
 		}
 	};
 

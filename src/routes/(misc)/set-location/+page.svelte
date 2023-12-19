@@ -45,27 +45,38 @@
 	}
 </script>
 
-<main class="w-full flex flex-col items-center mt-20">
+<main class="h-screen w-full flex flex-col justify-center">
 	{#if geoLocError}
-		☝️ Allow Geolocation To Accurate Address And Refresh
-		<br />
-		Don't know how to? watch this video -
-		<button class="btn btn-outline btn-seconddary"
-			><a
-				data-sveltekit-reload
-				href="https://youtu.be/LM6lWvkIVVw?si=PC80lF0t7DXGZ9j2"
-				target="_blank">enable geolocation</a
-			></button
-		>
+		<div class="flex flex-col items-center m-10">
+			<div class="">
+				<p class="text-center text-xl font-semibold">
+					☝️ Allow Geolocation To Accurate Address And Refresh
+				</p>
+				<br />
+				<p class="text-center">Don't know how to? watch this video</p>
+				<br />
+			</div>
+			<div>
+				<button class="btn btn-sm btn-outline btn-primary"
+					><a
+						data-sveltekit-reload
+						href="https://youtu.be/LM6lWvkIVVw?si=PC80lF0t7DXGZ9j2"
+						target="_blank">how to enable Geolocation</a
+					></button
+				>
+			</div>
+		</div>
+	{:else}
+		<div class="flex flex-col items-center">
+			<div>
+				<input
+					type="text"
+					bind:value={address}
+					placeholder={$currentLocation}
+					class="input input-bordered input-primary w-full max-w-xs"
+				/>
+				<button on:click={setLocation} class="btn btn-primary w-full mt-2">Set</button>
+			</div>
+		</div>
 	{/if}
-
-	<div>
-		<input
-			type="text"
-			bind:value={address}
-			placeholder={$currentLocation}
-			class="input input-bordered input-primary w-full max-w-xs"
-		/>
-		<button on:click={setLocation} class="btn btn-base btn-outline w-full mt-2">Set</button>
-	</div>
 </main>

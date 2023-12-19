@@ -123,9 +123,10 @@
 	}
 
 	let showPopup = false;
+	let confirmation = false;
 
-	function togglePopup() {
-		showPopup = !showPopup;
+	function goToBookings() {
+		window.location.href = '/bookings';
 	}
 
 	async function placeOrder() {
@@ -140,14 +141,18 @@
 			washerContact: selectedWasherContact,
 			car: localStorage?.getItem('car'),
 			carSize: localStorage?.getItem('carSize'),
-			address: localStorage?.getItem('address')
+			address: localStorage?.getItem('address'),
+			completion: false
 		};
 
 		try {
 			const record = await pb.collection('filledSlots').create(order);
 			if (record) {
-				window.location.href = '/';
+				showPopup = false;
+				confirmation = true;
+				rain();
 			}
+			1;
 		} catch (error) {
 			return error;
 		}
@@ -158,17 +163,42 @@
 	});
 </script>
 
-<div class="w-full h-screen flex flex-col">
-	<div class="w-full flex items-center justify-between">
-		<a href="/services/{id}"><i class="fi fi-rr-arrow-left" /></a>
-		<h1 class="text-2xl">{name}</h1>
-		<div />
+<div class="w-full h-full flex flex-col">
+	<div class="w-full flex justify-center mt-4">
+		<h1 class="text-2xl font-semibold">{name}</h1>
 	</div>
-	<div>
+
+	<div class="mt-8">
+		<p class="">Select a date</p>
+	</div>
+
+	<div class="mt-4">
 		<DateSelector bind:selectedDate />
 	</div>
-	<br />
 
+	<div class="mt-8">
+		{#if availableSlots.length !== 0}
+			{#if displaySlots.length === 0}
+				<p>No slots available for this date</p>
+			{:else}
+				<div class="">
+					<p>Select a slot</p>
+					{#each displaySlots as ds}
+						<button
+							class="mt-4 btn btn-sm {selectedSlot === ds.slot
+								? 'btn-accent btn-outline'
+								: 'btn-ghost'}"
+							on:click={() => {
+								selectedSlot = ds.slot;
+								selectedWasherId = ds.id;
+								selectedWasherContact = ds.contact;
+							}}>{ds.slot.start}</button
+						>
+					{/each}
+				</div>
+			{/if}
+		{/if}
+	</div>
 	<div class="alert flex">
 		<span>💸</span>
 		<span class="text-sm">You pay after the wash is done </span>
@@ -182,29 +212,13 @@
 	<br /><br />
 	<div />
 	<div>
-		{#if availableSlots.length === 0}
-			<p>please select a date first</p>
-		{/if}
-		{#if availableSlots.length !== 0}
-			{#if displaySlots.length === 0}
-				<p>no slots available for this date</p>
-			{:else}
-				{#each displaySlots as ds}
-					<button
-						class="btn {selectedSlot === ds.slot ? 'btn-secondary btn-outline' : 'btn-ghost'}"
-						on:click={() => {
-							selectedSlot = ds.slot;
-							selectedWasherId = ds.id;
-							selectedWasherContact = ds.contact;
-						}}>{ds.slot.start}</button
-					>
-				{/each}
-			{/if}
-		{/if}
+		<br /> <br />
 	</div>
 	{#if showPopup}
 		<div
-			on:click={togglePopup}
+			on:click={() => {
+				showPopup = false;
+			}}
 			class="w-full h-full backdrop-blur-sm absolute flex flex-col justify-center"
 		>
 			<div class="card w-96 bg-primary text-primary-content">
@@ -224,15 +238,32 @@
 			</div>
 		</div>
 	{/if}
+	{#if confirmation}
+		<div
+			on:click={() => {
+				confirmation = false;
+			}}
+			class="w-full h-full backdrop-blur-sm absolute flex flex-col justify-center"
+		>
+			<div class="card w-96 bg-primary text-primary-content">
+				<div class="card-body">
+					<h2 class="card-title">{name}</h2>
+					<p>Your order has been placed!</p>
+					<button class="btn" on:click={goToBookings}>Go to bookings</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<div>
-		<button class="btn btn-secondary w-full mt-96" on:click={togglePopup}>BOOK</button>
-	</div>
-	<!-- {#if triggerRain}
-		<Rain />
-		<a href="/"><button on:click={rain} class="btn btn-secondary w-11/12">Go to bookings</button></a
+		<button
+			class="btn btn-secondary w-full mt-96"
+			on:click={() => {
+				showPopup = true;
+			}}>BOOK</button
 		>
-	{:else}
-		<button on:click={rain} class="btn btn-secondary w-11/12">Book</button>
-	{/if} -->
+	</div>
+	{#if triggerRain}
+		<Rain />
+	{/if}
 </div>

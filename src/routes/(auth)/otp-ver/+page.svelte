@@ -13,7 +13,7 @@
 	export let data;
 </script>
 
-<main class="h-screen w-full flex items-start justify-center">
+<main class="h-screen w-full flex items-center">
 	<form
 		method="POST"
 		action="?/otpVerification"
@@ -44,7 +44,7 @@
 		{/if}
 
 		<div class="form-control w-full max-w-md flex justify-evenly py-4">
-			<button on:click={increment} type="submit" class="btn btn-secondary mt-4">Submit OTP</button>
+			<button on:click={increment} type="submit" class="btn btn-primary mt-4">Submit OTP</button>
 		</div>
 	</form>
 </main>

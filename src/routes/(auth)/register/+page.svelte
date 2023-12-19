@@ -37,7 +37,7 @@
 					/>
 				</label>
 			</div>
-			<div class="w-full fleex flex-col">
+			<!-- <div class="w-full fleex flex-col">
 				<details class="dropdown mb-32">
 					<summary class="m-1 btn">{car}</summary>
 					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
@@ -51,7 +51,7 @@
 					</ul>
 				</details>
 				<input type="hidden" name="car" bind:value={car} />
-			</div>
+			</div> -->
 			<div class="w-full">
 				<label class="label">
 					<span class="label-text">Contact</span>

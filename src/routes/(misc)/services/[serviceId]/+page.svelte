@@ -33,39 +33,42 @@
 		services = selectedService.services;
 	}
 	const time = calculateTime($currentCarSize, name);
+	console.log(name);
 </script>
 
-<div class="w-full h-screen flex flex-col">
-	<div class="w-full flex items-center justify-between">
-		<a href="/"><i class="fi fi-rr-arrow-left" /></a>
-		<h1 class="text-2xl">{name}</h1>
-		<div />
+<div class="w-full h-full flex flex-col">
+	<div class="w-full flex justify-center mt-2">
+		<h1 class="text-2xl font-semibold">{name}</h1>
 	</div>
-	<div class="w-full">
+
+	<div class="w-full mt-8">
 		<YTplayer {link} />
 	</div>
-	{$currentCarSize}
-	<div class="flex flex-col">
-		<h1 class="text-xl">{name}</h1>
-		<ul class="">
+
+	<div class="flex flex-col mt-4">
+		<h1 class="text-xl font-semibold">{name}</h1>
+		<ul class="mt-2">
 			<li>🕐 {time.timeTaken} minutes</li>
 			<li>💧 No mess</li>
 			<li>🏠 Doorstep</li>
 			<li>💸 {price}</li>
 		</ul>
 	</div>
-	<div class="flex flex-col">
-		<h1 class="text-xl">Services</h1>
-		<ul class="list-disc ml-4">
+
+	<div class="flex flex-col mt-4">
+		<h1 class="text-xl font-semibold">Services</h1>
+		<ul class="mt-2">
 			{#each services as service}
 				<li>{service}</li>
 			{/each}
 		</ul>
 	</div>
 
-	{#if data?.user}
-		<a href="/book/{id}"><button class="btn btn-secondary w-11/12">Book</button></a>
-	{:else}
-		<a href="/login"><button class="btn btn-secondary w-11/12">Login to book</button></a>
-	{/if}
+	<div class="mt-36 mb-8">
+		{#if data?.user}
+			<a href="/book/{id}"><button class="btn w-full btn-primary w-11/12">Book</button></a>
+		{:else}
+			<a href="/login"><button class="btn btn-primary w-11/12">Login to book</button></a>
+		{/if}
+	</div>
 </div>
