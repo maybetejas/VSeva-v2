@@ -682,6 +682,7 @@ export function splitTimeSlots(workers, targetWeekday, serviceTimeInMinutes) {
 //   function areSlotsEqual(slot1, slot2) {
 // 	return slot1.start === slot2.start && slot1.end === slot2.end;
 //   }
+// someneome
   
   export function textDateToUTC(inputDate) {
     const dateObject = new Date(inputDate);
