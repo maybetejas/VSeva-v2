@@ -140,9 +140,6 @@
 				{/each}
 			</div>
 		</div>
-		<div class="w-full mb-8">
-			<ReviewCarousel {reviews} />
-		</div>
 		<div class="w-full flex flex-col mb-8">
 			<FAQs />
 		</div>
