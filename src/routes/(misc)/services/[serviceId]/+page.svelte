@@ -48,9 +48,8 @@
 	<div class="flex flex-col mt-4">
 		<h1 class="text-xl font-semibold">{name}</h1>
 		<ul class="mt-2">
-			<li>🕐 {time.timeTaken} minutes</li>
-			<li>💧 No mess</li>
-			<li>🏠 Doorstep</li>
+			<li>🏠 On subscriptions</li>
+			<li>🤚 Convenient</li>
 			<li>💸 {price}</li>
 		</ul>
 	</div>
@@ -59,7 +58,7 @@
 		<h1 class="text-xl font-semibold">Services</h1>
 		<ul class="mt-2">
 			{#each services as service}
-				<li>{service}</li>
+				<li>- {service}</li>
 			{/each}
 		</ul>
 	</div>
@@ -68,7 +67,7 @@
 		{#if data?.user}
 			<a href="/book/{id}"><button class="btn w-full btn-primary w-11/12">Book</button></a>
 		{:else}
-			<a href="/login"><button class="btn btn-primary w-11/12">Login to book</button></a>
+			<a href="/login"><button class="btn btn-primary w-full">Login to book</button></a>
 		{/if}
 	</div>
 </div>

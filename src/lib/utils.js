@@ -112,119 +112,91 @@ export function toCamelCase(str) {
   }
   
 
-export const servicesList = [
+  export const servicesList = [
 	{
-		id: 1,
-		svg: 'interiordeep.svg',
-		name: 'Interior',
-		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: [
-			'Exterior wash',
-			'Vaccum',
-			'Carpet wash',
-			'Hood cleaning',
-			'Dashboard polish',
-			'Tyre polish',
-			'Exterior Wax'
-		],
-		addons: [
-			{
-				name: "paper mat",
-				price: 10
-			},
-			{
-				name: "air freshner",
-				price: 10
-			}
-		]
-		
-	},
-	{
-		id: 2,
-		svg: 'car wash.svg',
-		name: 'Exterior',
-		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Exterior wash', 'Tyre wash', 'Mud guard wash', 'Windshield wash', 'Wax'],
-		addons: [
-			{
-				name: "paper mat",
-				price: 10
-			},
-			{
-				name: "air freshner",
-				price: 10
-			}
-		]
-	},
-	{
-		id: 3,
-		svg: 'deluxe-detail.svg',
-		name: 'Full body',
-		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
-		addons: [
-			{
-				name: "paper mat",
-				price: 10
-			},
-			{
-				name: "air freshner",
-				price: 10
-			}
-		]
-	},
-	{
-		id: 4,
-		svg: 'bike.svg',
-		name: 'Bike',
-		link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-		services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
-		addons: [
-			{
-				name: "paper mat",
-				price: 10
-			},
-			{
-				name: "air freshner",
-				price: 10
-			}
-		]
+	  id: 1,
+	  svg: 'tow.svg',
+	  name: "Towing",
+	  link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	  services: [
+		"Emergency Towing",
+		"Flatbed Towing",
+		"Motorcycle Towing",
+		"Off-Road Recovery",
+		"Winching Service",
+		"Tire Changes"
+	  ]
 	},
 	// {
-	// 	id: 5,
-	// 	svg: 'car.svg',
-	// 	name: 'waterless',
-	// 	link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-	// 	services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
-	// 	addons: [
-	// 		{
-	// 			name: "paper mat",
-	// 			price: 10
-	// 		},
-	// 		{
-	// 			name: "air freshner",
-	// 			price: 10
-	// 		}
-	// 	]
+	//   id: 2,
+	//   svg: 'fuel.svg',
+	//   name: "fuel stations",
+	//   link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	//   services: [
+	// 	"Fuel Delivery",
+	// 	"Electric Vehicle Charging",
+	// 	"Fuel System Repair",
+	// 	"Battery Jumpstart",
+	// 	"Fuel Quality Testing",
+	// 	"Range Extender Service"
+	//   ]
 	// },
-	// {
-	// 	id: 6,
-	// 	svg: 'car.svg',
-	// 	name: 'waterless',
-	// 	link: 'https://www.youtube.com/embed/6F2XzwW4X-I?si=pTeyw0VMOgSDQhma',
-	// 	services: ['Vaccum', 'Carpet cleaning', 'Hood cleaning', 'Dashboard polish'],
-	// 	addons: [
-	// 		{
-	// 			name: "paper mat",
-	// 			price: 10
-	// 		},
-	// 		{
-	// 			name: "air freshner",
-	// 			price: 10
-	// 		}
-	// 	]
-	// }
-];
+	{
+	  id: 3,
+	  svg: 'breakdown.svg',
+	  name: "Breakdown Assistance",
+	  link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	  services: [
+		"On-Site Breakdown Assistance",
+		"Engine Diagnostics",
+		"Transmission Repair",
+		"Brake System Repair",
+		"Ignition System Repair",
+		"Cooling System Repair"
+	  ]
+	},
+	{
+	  id: 4,
+	  svg: 'accident.svg',
+	  name: "Accident Assistance",
+	  link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	  services: [
+		"Emergency Medical Assistance",
+		"Vehicle Recovery After Accident",
+		"Collision Repair",
+		"Insurance Claim Assistance",
+		"Legal Support",
+		"Temporary Transportation"
+	  ]
+	},
+	{
+	  id: 5,
+	  svg: 'puncture.svg',
+	  name: "Puncture Assistance",
+	  link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	  services: [
+		"Tire Repair",
+		"Tire Replacement",
+		"Wheel Balancing",
+		"Tire Pressure Check",
+		"Spare Tire Installation",
+	  ]
+	},
+	{
+	  id: 6,
+	  svg: 'regser.svg',
+	  name: "Regular Servicing",
+	  link: "https://www.youtube.com/embed/cFAPBcT4mTg?si=S77UA9L_EpiWbk-_",
+	  services: [
+		"Engine Oil Change",
+		"Filter Replacement",
+		"Fluid Check and Top-Up",
+		"Brake Inspection",
+		"Battery Check",
+		"Tire Rotation",
+	  ]
+	},
+  ];
 
 export function getServicesArray(serviceName) {
 	// Find the object in servicesList that matches the given serviceName
@@ -739,42 +711,56 @@ export function deleteOverlappingSlotsForWashers2(
 export function calculatePrice(carSize, serviceType) {
 	const basePrices = {
 		compact: {
-			Interior: 350,
-			Exterior: 250,
-			"Full Body": 575
+			"Towing": 150,
+			"Breakdown Assistance": 100,
+			"Puncture Assistance": 75,
+			"Accident Assistance": 200,
+			"Regular Servicing": 250
 		},
 		midsIze: {
-			Interior: 350 * 1.15,
-			Exterior: 250 * 1.15,
-			"Full Body": 575 * 1.15
+			"Towing": 180,
+			"Breakdown Assistance": 120,
+			"Puncture Assistance": 90,
+			"Accident Assistance": 230,
+			"Regular Servicing": 280
 		},
 		fullsize: {
-			Interior: 350 * 1.3,
-			Exterior: 250 * 1.3,
-			"Full Body": 575 * 1.3
+			"Towing": 210,
+			"Breakdown Assistance": 150,
+			"Puncture Assistance": 110,
+			"Accident Assistance": 260,
+			"Regular Servicing": 310
 		},
 		hatchback: {
-			Interior: 350 * 1.1,
-			Exterior: 250 * 1.1,
-			"Full Body": 575 * 1.1
+			"Towing": 160,
+			"Breakdown Assistance": 110,
+			"Puncture Assistance": 80,
+			"Accident Assistance": 180,
+			"Regular Servicing": 220
 		},
 		sedan: {
-			Interior: 350 * 1.2,
-			Exterior: 250 * 1.2,
-			"Full Body": 575 * 1.2
+			"Towing": 190,
+			"Breakdown Assistance": 130,
+			"Puncture Assistance": 100,
+			"Accident Assistance": 210,
+			"Regular Servicing": 260
 		},
 		suv: {
-			Interior: 350 * 1.25,
-			Exterior: 250 * 1.25,
-			"Full Body": 575 * 1.25
+			"Towing": 200,
+			"Breakdown Assistance": 140,
+			"Puncture Assistance": 120,
+			"Accident Assistance": 230,
+			"Regular Servicing": 270
 		},
 		muv: {
-			Interior: 350 * 1.35,
-			Exterior: 250 * 1.35,
-			"Full Body": 575 * 1.35
+			"Towing": 220,
+			"Breakdown Assistance": 160,
+			"Puncture Assistance": 130,
+			"Accident Assistance": 250,
+			"Regular Servicing": 300
 		}
 	};
-
+	
 	const sizePrices = basePrices[carSize];
 
 	if (!sizePrices) {

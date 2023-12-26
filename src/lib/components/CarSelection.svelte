@@ -54,19 +54,26 @@
 		}
 	}
 
+	let carSelected = false;
+
 	function selectCar(car) {
 		currentCar.set(car);
 		currentCarSize.set(getCarSize(car));
 
+		// Clear the filteredCars array
+		filteredCars = [];
+
+		// Set carSelected to true when a car is selected
+		carSelected = true;
+
 		const oldCar = localStorage?.getItem('car');
 		const oldCarSize = localStorage?.getItem('carSize');
 
-		if (oldCar !== $currentCar && oldCarSize !== $currentCarSize) {
+		if (oldCar !== $currentCar || oldCarSize !== $currentCarSize) {
 			localStorage?.setItem('car', $currentCar);
 			localStorage?.setItem('carSize', $currentCarSize);
 		}
 	}
-
 	onMount(async () => {
 		carDataSet = $carsData;
 	});
@@ -88,7 +95,7 @@
 				{car}
 			</li>
 		{/each}
-	{:else if searchQuery.length >= 3}
+	{:else if searchQuery.length >= 3 && !carSelected && filteredCars.length === 0}
 		<p>No matching cars found.</p>
 	{/if}
 </ul>

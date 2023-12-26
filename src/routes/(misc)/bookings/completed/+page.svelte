@@ -1,6 +1,23 @@
 <script>
 	import { formatDateForBookings, convertTo12HourFormat2 } from '$lib/utils.js';
 	export let data;
+
+	function cnt(inputDate) {
+		const date = new Date(inputDate);
+		const day = date.getDate();
+		const weekday = date.toLocaleString('default', { weekday: 'long' });
+
+		const daySuffix =
+			day % 10 === 1 && day !== 11
+				? 'st'
+				: day % 10 === 2 && day !== 12
+				? 'nd'
+				: day % 10 === 3 && day !== 13
+				? 'rd'
+				: 'th';
+
+		return `${day}${daySuffix} ${weekday}`;
+	}
 </script>
 
 {#each data?.completeOrders as order (order.id)}
@@ -8,14 +25,9 @@
 		<div class="w-1/2 h-full flex flex-col justify-evenl">
 			<div>
 				<p class="font-semibold">{order.service}</p>
-				<p class="">{formatDateForBookings(order.date)}</p>
-				<p>{convertTo12HourFormat2(order.slot.start)} - {convertTo12HourFormat2(order.slot.end)}</p>
+				<p>{cnt(order.selectedDate)}</p>
+				<p class="">{order.price}</p>
 			</div>
-		</div>
-		<div class="w-1/2 h-full flex flex-col">
-			<button class="btn btn-primary btn-sm ml-auto mr-2">
-				<a href="/ordersDetails/completedOrders/{order.id}">details</a>
-			</button>
 		</div>
 	</div>
 {/each}

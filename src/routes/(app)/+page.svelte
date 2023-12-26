@@ -1,11 +1,13 @@
 <script>
+	import FAQs from './../../lib/components/FAQs.svelte';
+	import Map from './../../lib/components/Map.svelte';
 	import ReviewCarousel from './../../lib/components/ReviewCarousel.svelte';
 	import { servicesList, subscriptions } from '$lib/utils.js';
 	import YTplayer from '$lib/components/YTplayer.svelte';
 	import { currentLocation } from '$lib/utils.js';
 	import { formatAddress } from '$lib/utils.js';
 	import CarSelection from '$lib/components/CarSelection.svelte';
-
+	//yeah
 	export let data;
 	let reviews = data?.recordsWithReviewAndRating;
 	let isAddress = false;
@@ -121,136 +123,35 @@
 			</div>
 		</div>
 
-		<div class="mb-4">
-			<YTplayer link="https://www.youtube.com/embed/JtH68PJIQLE?si=LJiaDOSieiO8mGH8" />
+		<div class="mb-8 bg-slate-400">
+			<Map />
 		</div>
 
-		<div class="mb-6">
-			<div class="grid grid-cols-2 grid-rows-2 gap-4">
+		<div class="mb-8">
+			<div class="grid grid-cols-3 grid-rows-2 gap-2">
 				{#each servicesList as service}
 					<div
 						on:click={() => handleClick(service)}
-						class="p-4 rounded-lg shadow-md cursor-pointer bg-base-150"
+						class="p-2 rounded-lg shadow-md cursor-pointer bg-base-150"
 					>
-						<img src={service.svg} alt="Service Icon" class="w-24 h-16 mx-auto mb-2" />
+						<img src={service.svg} alt="Service Icon" class="w-8 h-16 mx-auto mb-2" />
 						<p class="text-center">{service.name}</p>
 					</div>
 				{/each}
 			</div>
 		</div>
-		<div class="w-full flex justify-center">
+		<div class="w-full mb-8">
 			<ReviewCarousel {reviews} />
 		</div>
-		<!-- <div class="w-full flex flex-col items-center">
-			<h1>Subscribe</h1>
-			<div class="grid grid-cols-3 grid-rows-1 gap-4 w-full">
-				{#each subscriptions as subs}
-					<div
-						on:click={() => handleClick(subs)}
-						class="p-4 rounded-lg shadow-lg cursor-pointer bg-gray-700"
-					>
-						<img src={subs.svg} alt="Service Icon" class="w-16 h-16 mx-auto mb-2" />
-						<p class="text-center">{subs.name}</p>
-					</div>
-				{/each}
-			</div>
-		</div> -->
-		<!-- <div class="w-full flex flex-col items-center">
-			<h1>Refer a friend</h1>
-			<Card />
-		</div> -->
-		<!-- <div class="w-full flex flex-col items-center mb-4">
+		<div class="w-full flex flex-col mb-8">
 			<FAQs />
-		</div> -->
+		</div>
 	</div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- 
 {#if isCarSize || isAddress || isCoords}
 	<div
-		class="absolute top-1/2 bg-green-900 w-1/2 h-20 rounded-lg flex flex-col justify-center items-center p-4"
+		class="absolute top-1/2 bg-green-900 w-1/2 h-20 rounded-lg flex flex-col justify-center items-center p-4 z-10"
 	>
 		<p>{popupMessage}</p>
 		{#if isAddress && isCoords}
@@ -268,4 +169,37 @@
 			<button on:click={closePopup} class="btn btn-base btn-outline mt-2">Close</button>
 		{/if}
 	</div>
+{/if} -->
+{#if isCarSize || isAddress || isCoords}
+	<!-- Overlay -->
+	<div class="fixed inset-0 bg-gray-800 bg-opacity-50 z-50" id="poppup" />
+
+	<!-- Centered Card -->
+	<div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" id="poppup">
+		<div class="card w-96 bg-base-100 shadow-xl">
+			<div class="card-body" id="poppup">
+				<p>{popupMessage}</p>
+				{#if isAddress && isCoords}
+					<a href="/set-location"
+						><button class="btn btn-outline btn-xs">Set Address and Location</button></a
+					>
+				{/if}
+				{#if isAddress && !isCoords}
+					<a href="/set-location"><button class="btn btn-outline btn-xs">Set Address</button></a>
+				{/if}
+				{#if isCoords && !isAddress}
+					<a href="/set-location"><button class="btn btn-outline btn-xs">Set Location</button></a>
+				{/if}
+				{#if isCarSize}
+					<button on:click={closePopup} class="btn btn-base btn-outline mt-2">Close</button>
+				{/if}
+			</div>
+		</div>
+	</div>
 {/if}
+
+<style>
+	#poppup {
+		z-index: 100000;
+	}
+</style>

@@ -65,11 +65,11 @@
 	}
 
 	let price = 0;
-	$: price = calculatePrice($currentCarSize, name);
+	$: {
+		price = calculatePrice($currentCarSize, name);
+	}
+
 	let selectedDate = '';
-	let day = '';
-	$: day = selectedDate.toLocaleString('default', { weekday: 'long' });
-	const time = calculateTime($currentCarSize, name);
 
 	///realtime subscribed to the array
 	pb.collection('filledSlots').subscribe('*', async (e) => {
@@ -158,62 +158,201 @@
 		}
 	}
 
+	let towingService = null;
+
+	function handleRadioChange(event) {
+		towingService = event.target.value;
+	}
+
+	let serviceType = null;
+	let showServiceCenterSelection = false;
+
+	function handleServiceTypeChange(event) {
+		serviceType = event.target.value;
+
+		// Show the service center selection div when "Come to a partner service center" is selected
+		showServiceCenterSelection = serviceType === 'partner-center';
+	}
+
+	function handleDateSelected(event) {
+		selectedDate = event.detail; // Get the selected date from the event
+		console.log('Selected Date:', selectedDate);
+	}
+
+	function handleWeekdaySelected(event) {
+		const selectedWeekday = event.detail;
+		console.log('Selected Weekday:', selectedWeekday);
+	}
+
+	let serviceCenters = [
+		{ id: 'center1', name: 'Service Center 1' },
+		{ id: 'center2', name: 'Service Center 2' },
+		{ id: 'center3', name: 'Service Center 3' },
+		{ id: 'center4', name: 'Service Center 4' },
+		{ id: 'center5', name: 'Service Center 5' }
+	];
+
+	let selectedServiceCenter = '';
+
+	function handleServiceCenterSelection(event) {
+		selectedServiceCenter = event.target.value;
+	}
+
+	async function placeOrder2() {
+		console.log(price);
+		const order2 = {
+			service: name,
+			location: localStorage?.getItem('coords'),
+			price: price,
+			userId: data?.user?.id,
+			towingService,
+			serviceType,
+			selectedDate,
+			selectedServiceCenter,
+			completion: false,
+		};
+
+		try {
+			const record = await pb.collection('orders').create(order2);
+			if (record) {
+				confirmation = true;
+			}
+			1;
+		} catch (error) {
+			return error;
+		}
+	}
+
 	onDestroy(() => {
 		pb.collection('filledSlots').unsubscribe('*');
 	});
 </script>
 
-<div class="w-full h-full flex flex-col">
-	<div class="w-full flex justify-center mt-4">
-		<h1 class="text-2xl font-semibold">{name}</h1>
-	</div>
+<div class="w-full h-screen flex flex-col justify-between">
+	<div class="w-full">
+		<div class="mt-20">
+			<h1 class="font-bold text-4xl">Checkout</h1>
+		</div>
+		<div class="divider" />
+		<div class="fleex flex-col">
+			<div class="mt-12">
+				<h1 class="text-3xl font-semibold">{name}</h1>
+			</div>
+			<div class="mt-4">
+				{#if name !== 'Towing' && name !== 'Regular Servicing'}
+					<ul>
+						{#each services as service}
+							<li>{service}</li>
+						{/each}
+					</ul>
+				{:else if name == 'Towing'}
+					<div>
+						{#each [{ id: 'emergency', label: 'Emergency Towing' }, { id: 'flatbed', label: 'Flatbed Towing' }, { id: 'motorcycle', label: 'Motorcycle Towing' }, { id: 'off-road', label: 'Off-Road Recovery' }, { id: 'winching', label: 'Winching Service' }, { id: 'tire-changes', label: 'Tire Changes' }] as { id, label }}
+							<label for={id} class="flex items-center space-x-2">
+								<input
+									type="radio"
+									{id}
+									name="towing-service"
+									class="radio"
+									value={label}
+									bind:group={towingService}
+									on:change={handleRadioChange}
+								/>
+								<span>{label}</span>
+							</label>
+						{/each}
+					</div>
 
-	<div class="mt-8">
-		<p class="">Select a date</p>
-	</div>
+					<!-- Display the selected towing service -->
+					{#if towingService !== null}
+						<div class="mt-4">
+							<p>Selected Towing Service: {towingService}</p>
+						</div>
+					{/if}
+				{:else if name == 'Regular Servicing'}
+					<div>
+						<label for="on-spot" class="flex items-center space-x-2">
+							<input
+								type="radio"
+								id="on-spot"
+								name="service-type"
+								class="radio"
+								value="on-spot"
+								bind:group={serviceType}
+								on:change={handleServiceTypeChange}
+							/>
+							<span>On Spot Servicing</span>
+						</label>
 
-	<div class="mt-4">
-		<DateSelector bind:selectedDate />
-	</div>
+						<label for="partner-center" class="flex items-center space-x-2">
+							<input
+								type="radio"
+								id="partner-center"
+								name="service-type"
+								class="radio"
+								value="partner-center"
+								bind:group={serviceType}
+								on:change={handleServiceTypeChange}
+							/>
+							<span>Come to a Partner Service Center</span>
+						</label>
+					</div>
 
-	<div class="mt-8">
-		{#if availableSlots.length !== 0}
-			{#if displaySlots.length === 0}
-				<p>No slots available for this date</p>
-			{:else}
-				<div class="">
-					<p>Select a slot</p>
-					{#each displaySlots as ds}
-						<button
-							class="mt-4 btn btn-sm {selectedSlot === ds.slot
-								? 'btn-accent btn-outline'
-								: 'btn-ghost'}"
-							on:click={() => {
-								selectedSlot = ds.slot;
-								selectedWasherId = ds.id;
-								selectedWasherContact = ds.contact;
-							}}>{ds.slot.start}</button
-						>
-					{/each}
+					<!-- Display the selected service type -->
+					{#if serviceType !== null}
+						<div class="mt-4">
+							<p>Selected Service Type: {serviceType}</p>
+						</div>
+					{/if}
+
+					<!-- Show the service center selection div if "Come to a partner service center" is selected -->
+					{#if showServiceCenterSelection}
+						<div class="mt-4">
+							<h1>Select a Date</h1>
+							<br />
+							<!-- You can add more content here based on your requirements -->
+							<DateSelector
+								on:dateSelected={handleDateSelected}
+								on:weekdaySelected={handleWeekdaySelected}
+							/>
+							<br />
+							<div>
+								<h1>Select a Service Center</h1>
+
+								{#each serviceCenters as center}
+									<label for={center.id} class="flex items-center space-x-2">
+										<input
+											type="radio"
+											id={center.id}
+											name="service-center"
+											class="radio"
+											value={center.name}
+											bind:group={selectedServiceCenter}
+											on:change={handleServiceCenterSelection}
+										/>
+										<span>{center.name}</span>
+									</label>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				{/if}
+			</div>
+		</div>
+		<div class="divider" />
+		<div class="mt-12">
+			<div class="flex justify-between">
+				<div>Price:</div>
+				<div>
+					<b> {price}</b>
 				</div>
-			{/if}
-		{/if}
+			</div>
+		</div>
+		<div class="mt-16">
+			<button class="btn btn-primary w-full" on:click={placeOrder2}>Pay</button>
+		</div>
 	</div>
-	<div class="alert flex">
-		<span>💸</span>
-		<span class="text-sm">You pay after the wash is done </span>
-	</div>
-	<br /><br />
-	<div>
-		<h1>Price: {price} for {$currentCarSize}</h1>
-		<br />
-		<h1>Time: {time.slotTaken} minutes</h1>
-	</div>
-	<br /><br />
-	<div />
-	<div>
-		<br /> <br />
-	</div>
+
 	{#if showPopup}
 		<div
 			on:click={() => {
@@ -253,17 +392,5 @@
 				</div>
 			</div>
 		</div>
-	{/if}
-
-	<div>
-		<button
-			class="btn btn-secondary w-full mt-96"
-			on:click={() => {
-				showPopup = true;
-			}}>BOOK</button
-		>
-	</div>
-	{#if triggerRain}
-		<Rain />
 	{/if}
 </div>

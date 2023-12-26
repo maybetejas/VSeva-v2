@@ -14,7 +14,7 @@
 		return words.length > numWords ? words.slice(0, numWords).join(' ') + '...' : text;
 	};
 </script>
-
+<h1 class="text-xl font-semibold">Reviews</h1>
 <div class="w-full carousel rounded-box shadow-lg">
 	{#each reviews as s (s.id)}
 		<div class="carousel-item w-full">
