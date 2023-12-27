@@ -162,51 +162,52 @@
 	}
 </script>
 
-<div class="h-1/3 w-full">
-	<h1 class="text-5xl font-semibold mt-28 text-center">We're here to help 😎</h1>
-</div>
+<div class="w-full h-screen flex flex-col justify-evenly">
+	<div class="">
+		<h1 class="text-5xl font-semibold mt-2 text-center">We're here to help 😎</h1>
+	</div>
 
-<div id="chat-window" class="mt-8 w-96 h-80 bg-gray-100 p-4 rounded-lg overflow-auto">
-	{#each messages as { text, sender }, index}
-		<div class="{sender === 'bot' ? 'text-left' : 'text-right'} mb-2" key={index}>
-			<!-- <div class="bg-white p-2 rounded-lg shadow">
+	<div id="chat-window" class="mt-2 w-96 h-1/3 bg-gray-100 p-4 rounded-lg overflow-auto">
+		{#each messages as { text, sender }, index}
+			<div class="{sender === 'bot' ? 'text-left' : 'text-right'} mb-2" key={index}>
+				<!-- <div class="bg-white p-2 rounded-lg shadow">
 				{text}
 			</div> -->
-			<div class="chat chat-start">
-				<div class="chat-bubble chat-bubble-secondary">{text}</div>
-			  </div>
-		</div>
-	{/each}
-</div>
+				<div class="chat chat-start">
+					<div class="chat-bubble chat-bubble-secondary">{text}</div>
+				</div>
+			</div>
+		{/each}
+	</div>
 
-<div class="mt-2 flex flex-wrap">
-	{#each sections as section}
-		<button
-			class="m-2 btn btn-sm btn-primary {selectedSection === section ? 'btn-selected' : ''}"
-			on:click={() => sendMessage(section)}
+	<div class="mt-2 flex flex-wrap">
+		{#each sections as section}
+			<button
+				class="m-2 btn btn-sm btn-primary {selectedSection === section ? 'btn-selected' : ''}"
+				on:click={() => sendMessage(section)}
+			>
+				{section}
+			</button>
+		{/each}
+	</div>
+
+	<hr class="my-2" />
+
+	<div class="mt-2 flex flex-wrap">
+		{#each sectionPrompts as prompt}
+			<div class="m-2 bg-white p-2 rounded-lg shadow" on:click={() => sendMessage(prompt)}>
+				{prompt}
+			</div>
+		{/each}
+	</div>
+
+
+	<div class="w-full flex flex-col justify-center items-center mb-8">
+		<h1 class="font-semibold">Didn't find what you were looking for?</h1>
+		<a target="_blank" href="https://www.whatsapp.com/"
+			><button class="btn bg-green-500 mt-4">Whatsapp us</button></a
 		>
-			{section}
-		</button>
-	{/each}
-</div>
-
-<hr class="my-2" />
-
-<div class="mt-2 flex flex-wrap">
-	{#each sectionPrompts as prompt}
-		<div class="m-2 bg-white p-2 rounded-lg shadow" on:click={() => sendMessage(prompt)}>
-			{prompt}
-		</div>
-	{/each}
-</div>
-
-<br />
-
-<div class="w-full flex flex-col justify-center items-center">
-	<h1 class="font-semibold">Didn't find what you were looking for?</h1>
-	<a target="_blank" href="https://www.whatsapp.com/"
-		><button class="btn bg-green-500 mt-4">Whatsapp us</button></a
-	>
+	</div>
 </div>
 
 <style>

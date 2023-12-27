@@ -348,7 +348,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="mt-16">
+		<div class="mt-4">
 			<button class="btn btn-primary w-full" on:click={placeOrder2}>Pay</button>
 		</div>
 	</div>
