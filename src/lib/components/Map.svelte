@@ -46,7 +46,7 @@
 <style>
 	#map {
 		width: 99%;
-		height: 450px;
+		height: 400px;
 		margin: 0;
 		padding: 0;
 	}

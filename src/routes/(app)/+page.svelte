@@ -64,7 +64,10 @@
 </script>
 
 <div class="min-h-screen w-full flex flex-col items-center">
+
 	<div class="h-full w-11/12">
+
+		
 		<div class="navbar bg-base-100">
 			<div class="flex-1">
 				<div>
@@ -144,6 +147,7 @@
 			<FAQs />
 		</div>
 	</div>
+
 </div>
 <!-- 
 {#if isCarSize || isAddress || isCoords}
