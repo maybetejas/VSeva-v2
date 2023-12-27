@@ -25,7 +25,9 @@
 		<div class="w-1/2 h-full flex flex-col justify-evenly">
 			<div>
 				<p class="font-semibold">{order.service}</p>
-				<p>{cnt(order.selectedDate)}</p>
+				{#if order.selectedServiceCenter !== ""}
+					<p>{cnt(order.selectedDate)}</p>
+				{/if}
 				<p class="">{order.price}</p>
 			</div>
 		</div>
